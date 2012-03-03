@@ -1,5 +1,5 @@
 A simple blog powered by web.py
 
-What I user in this project: web.py, sqlalchemy and jinja2
+What I use in this project: web.py, sqlalchemy and jinja2
 
 Run models.py to setup databse  before you use it.
