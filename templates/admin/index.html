@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block content %}
+<script type="text/javascript" src="/static/js/jquery.form.utf8.js"></script>
+<script type="text/javascript" src="/static/admin/reply.js"></script>
+<script type="text/javascript">
+$(document).ready(function() { 
+    $('#quick_post').ajaxForm({
+    	resetForm: true,
+    	clearForm: true,
+        success:function(responseText,statusText, xhr,form){
+			$('.message').empty().append(responseText)
+        }
+     }); 
+}); 
+</script>
+<div class="wrap">
+ <h2>控制板</h2>
+ <div id="dashboard-widgets-wrap">
+ 	<div id="dashboard-widgets" style="padding-top:10px;">
+ 		<div id="side-info-column" class="inner-sidebar">
+ 			<div id="side-sortables" style="position: relative;" class="metabox-holder">
+ 				<div id="dashboard_quick_press" class="postbox">
+ 					<h3 class="hndle"><span>快速发布</span></h3>
+ 					<div class="inside">
+ 						<div class="message">
+ 						  
+ 						</div>
+ 						<p class="textright"></p>
+ 						<form method="post" action="/admin/quickpost" id="quick_post">
+ 							<h4 id="quick-post-title"><label for="title">标题</label></h4>
+ 							<div class="input-text-wrap">
+								<input type="text" value="" autocomplete="off" tabindex="1" id="title" name="title">
+							</div>
+							<h4 id="content-label"><label for="content">内容</label></h4>
+							<div class="textarea-wrap">
+								<textarea tabindex="2" cols="15" rows="3" class="mceEditor" id="content" name="content"></textarea>
+							</div>
+							<h4><label for="tags-input">标签</label></h4>
+							<div class="input-text-wrap">
+								<input type="text" value="" tabindex="3" id="tags-input" name="tags">
+							</div>
+							<p class="submit">
+								<input type="submit" value="保存草稿" tabindex="4" class="button" id="save-post" name="save">
+								<input type="reset" class="cancel" value="取消">
+								<input type="submit" value="发布" class="button-primary" tabindex="5" accesskey="p" id="publish" name="publish">
+								<br class="clear">
+							</p>
+ 						</form>
+ 					</div>
+ 				</div>
+ 			</div>
+ 		</div>
+ 		<div class="has-sidebar" id="post-body">
+ 			<div class="has-sidebar-content" id="dashboard-widgets-main-content">
+ 				<div style="position: relative;" class="metabox-holder ui-sortable" id="normal-sortables">
+ 					<div id="dashboard_right_now" class="postbox">
+						<h3 class="hndle"><span>当前</span></h3>
+						<div class="inside">
+						<p class="sub">概览</p>
+						<div class="table">
+						<table>
+							<tbody>
+							<tr class="first">
+								<td class="first b b-posts"><a href="/admin/posts">{{ post_count }}</a></td>
+								<td class="t posts">文章</td>
+								<td class="b b-comments"><a href="/admin/comments">{{ comment_count }}</a></td>
+								<td class="last t comments">评论</td></tr><tr>
+								<td class="first b b_pages"><a href="/admin/pages">{{ page_count }}</a></td>
+								<td class="t pages">页面</td>
+								<td class="b b-spam"><a href="/admin/spam-comments"><span class="spam-count">{{ spam_count }}</span></a></td>
+								<td class="last t spam">垃圾评论</td>
+							</tr>
+							<tr>
+								<td class="first b b-cats"><a href="/admin/categories">{{ category_count }}</a></td>
+								<td class="t cats">分类目录</td>
+								<td class="first b b-tags"><a href="#">{{ tag_count }}</a></td>
+								<td class="t tags">标签</td>
+							</tr>
+							</tbody>
+						</table>
+						</div>
+						<div class="versions">
+						<p><a href="/admin/settings" class="button rbutton">更换主题</a>主题 
+						<span class="b"><a href="/admin/settings">{{ theme_name }}</a></span> 
+						</p>
+						</div>
+						</div>
+					</div>
+					<div id="dashboard_recent_comments" class="postbox">
+						<h3 class="hndle"><span>最新评论</span></h3>
+						<div class="inside">
+							<div id="the-comment-list" class="list:comment">
+							{% for comment in recent_comments %}
+								<div class="comment comment-item" id="comment-{{comment.id}}">
+									<img width="50" height="50" class="avatar" alt="" src="/static/images/default.png">    <!-- 评论者头像 -->
+									<h4 class="comment-meta">
+									<a href="{{ comment.post.get_absolute_url() }}" target="_blank">{{ comment.post.title }}</a>
+									 <a href="{{ comment.get_absolute_url() }}" class="comment-link">#</a> 
+									 来自 <cite class="comment-author">
+									 {% if comment.url %}
+									 <a href="{{ comment.url }}" target="_blank">{{comment.author}}</a>
+									 {% else %}
+									 {{ comment.author }}
+									 {% endif %}
+									 </cite> 的评论 </h4>
+									<blockquote><p>{{ comment.content|safe }} </p></blockquote>
+									<p class="row-actions">
+										{% if comment.status == "approved" %}
+						             	<span class="spam"><a title="标记这个评论为垃圾评论" href="/admin/comment/mark/{{comment.id}}?status=spam">
+										垃圾评论</a></span>
+						             	{% else %}
+						             	<span class="approve"><a title="获准这条评论" href="/admin/comment/mark/{{comment.id}}?status=approved">
+										获准</a></span>
+						             	{% endif %}
+						             	<span class="delete">| <a href="/admin/comment/delete/{{ comment.id }}">删除</a></span>
+						             	<span class="edit">|<a href="/admin/comment/edit/{{ comment.id }}"> 编辑评论</a></span>
+						             	<span class="reply">| <a href="#comment-{{comment.id}}" onclick="return replyComment.showForm('comment-{{comment.id}}','{{comment.id}}','respond','{{comment.post_id}}')">回复</a></span>
+									</p>
+								</div>
+							{% endfor %}
+							</div>
+							<p class="textright"><a class="button" href="/admin/comments">查看全部</a></p>
+						</div>
+					</div>
+					<div id="respond" class="hidden">
+					<form action="/admin/comment/reply" method="post">
+						<input type="hidden" id="post_id" value="0" name="post_id"/>      <!--  值由js传入 -->
+						<input type="hidden" id="parent_id" value="0" name="parent_id"/>  <!-- 值由js传入 -->
+						<textarea rows="6" cols="50" name="comment"></textarea>
+						<p class="submit">
+						<input type="button" name="cancal" id="cancel-comment-reply" class="button" value="取消">
+						<input type="submit" name="reply" id="reply" class="button-primary alignright" value="回复">
+							<br class="clear">
+						</p>
+					</form>
+					</div>
+ 				</div>
+ 			</div>
+ 			
+ 		</div>
+ 	</div>
+ 	<div class="clear"></div>
+ </div>
+</div>
+{%endblock%}

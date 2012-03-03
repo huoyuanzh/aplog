@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="wrap">
+ 	<h2>编辑文章</h2>
+	<!-- render the error message if exist -->
+	{% if msg %}
+	<div align="center" style="background-color: rgb(255, 251, 204);">
+		<p>
+		<strong>{{ msg }}</strong> 
+		</p>
+	</div>
+	{% endif %}
+ 	<form id="posts-filter" action="/admin/post/bulk-delete" method="post">
+ 		<ul class="subsubsub">
+ 			<li>
+ 				<a href="/admin/posts">全部<span class="count">({{ all_count }})</span></a>|
+ 			</li>
+ 			<li>
+ 				<a href="/admin/posts?status=publish">已发布<span class="count">({{ publish_count }})</span></a>|
+ 			</li>
+ 			<li><a href="/admin/posts?status=draft">草稿<span>({{ draft_count }})</span></a></li>
+ 		</ul>
+ 		<p class="search-box hidden">
+			<label class="hidden" for="post-search-input">搜索文章:</label>
+			<input class="search-input" id="post-search-input" name="s" value="" type="text">
+			<input value="搜索文章" class="button" type="submit">
+ 		</p>
+ 		<div class="tablenav">
+ 			<div class="alignleft actions">
+			<input type="submit" class="button-secondary action" id="doaction" name="delete" value="批量删除">
+			<select name="m">
+				<option value="0" selected="selected">显示所有日期</option>
+				{%for archive in archives%}
+					<option value="{{archive.id}}">{{archive.year}}-{{archive.month}}</option>
+				{%endfor%}
+			</select>
+			<select name="cate" class="postform" id="cate">
+				<option value="0">查看全部分类目录</option>
+				{% for cate in categories %}
+					<option value="{{cate.id}}">{{cate.name}}</option>
+				{% endfor %}
+			</select>
+			<input type="submit" class="button-secondary" value="过滤" id="post-query-submit">
+ 			</div>
+ 		</div>
+ 		<div class="clear"></div>
+ 		<table class="widefat">
+			<thead>
+				<tr>
+				<th scope="col" class="check-column">
+				<input type="checkbox" onclick="$('input[name=checks]').attr('checked',this.checked);"></th>
+				<th style="width:28%;">标题</th>
+				<th>作者</th>
+				<th>分类目录</th>
+				<th>标签</th>
+				<th class="num"><div class="vers"><img alt="Comments" src="/static/images/comment-grey-bubble.png"></div></th>
+				<th style="width: 10%;">日期</th>
+				</tr>
+			</thead>
+			<tfoot>
+				<tr>
+				<th scope="col" class="check-column">
+				<input type="checkbox" onclick="$('input[name=checks]').attr('checked',this.checked);"></th>
+				<th>标题</th>
+				<th>作者</th>
+				<th>分类目录</th>
+				<th>标签</th>
+				<th class="num"><img alt="Comments" src="/static/images/comment-grey-bubble.png"></th>
+				<th >日期</th>
+				</tr>
+			</tfoot>
+			<tbody>
+			{% for post in posts %}
+				<tr valign="middle" id="post-{{post.id}}">
+				<th scope="row" class="check-column">
+				<input type="checkbox" name="checks" value="{{post.id}}"></th>
+				<td> 
+					<strong>
+						{% if post.status == "publish" %}
+							<a target="_blank" href="{{ post.get_absolute_url() }}" title="{{ post.title }}" class="row-title">{{ post.title }}</a>
+						{% else %}
+							<a target="_self" href="/admin/post/edit/{{post.id}}" title="Edit &quot;{{post.title}}&quot;" class="row-title">{{post.title}}</a>
+						{% endif %}
+					</strong>
+					<div class="row-actions">
+	              	<span> <a href="/admin/post/edit/{{post.id}}?content_type=post" title="Edit &quot;{{post.title}}&quot;">编辑</a></span>
+	              	<span class="delete">| <a href="/admin/post/delete?id={{post.id}}">删除</a></span>
+	              	{%if post.status == "publish" %}
+						<span class="editor">| 
+							<a target="_blank" href="{{ post.get_absolute_url() }}" title="{{ post.title }}">浏览</a>
+						</span>
+              		{% endif %}
+					</div>
+				</td>
+                <td>{{ post.author.name }}</td>
+                <td>
+					{% for term in post.terms %}
+						{% if term.type == "category" %}
+							<a href="/admin/category-posts/{{ term.slug }}">{{ term.name}} </a>
+						{% endif %}
+					{% endfor %}
+				</td>
+				<td>
+					{% for term in post.terms %}
+						{% if term.type == "tag" %}
+							{{ term.name }}
+						{% endif %}
+					{% endfor %}
+				</td>
+                <td class="num">{{ post.comment_count }}</td>
+                <td>{{ post.created.strftime("%b %dth, %Y at %I:%M%p") }}
+                <br/>{% if post.status == "publish" %}已发布{% else %}未发布{% endif %}
+                </td>
+				</tr>
+			{% else %}
+				<tr>
+					<td colspan="7" align="center" style="font-size: 16px;">还没有新文章,<a href="/admin/post/add">添加</a>一篇吧</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+ 	</form>
+ 	
+	<div class="pagenavi">
+	<span class="pages">
+		Page {{ page }} of {{ page_count }}
+	</span>
+	{% for num in range(1, page_count+1) %}
+		{% if num == page %}
+			<span class="current">{{ page }}</span>
+		{% else %}
+			{% if status %}<a href="?status={{status}}&page={{num}}">{{ num }}</a>
+			{% else %}<a href="?page={{num}}">{{ num }}</a>
+			{% endif %}
+		{% endif %}
+	{% endfor %}
+	</div>
+	
+</div>
+{%endblock%}

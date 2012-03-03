@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="wrap">
+	<h2>链接</h2>
+	<div id="col-container">
+		<div id="col-left">
+			<div class="col-wrap">
+				<div class="form-wrap">
+				<h3>添加链接</h3>
+				<div id="ajax-response"></div>
+				<form name="addcat"  method="post" action="/admin/link/add">
+				<div class="form-field form-required">
+					<label for="name">链接名称</label>
+					<input name="name" id="name" value="" size="40" type="text">
+				    <p>eg: example's Blog</p>
+				</div>
+				
+				<div class="form-field">
+					<label for="href">链接地址</label>
+					<input name="href" id="href" value="" size="40" type="text">
+				    <p>eg：http://www.example.com  (don’t forget the 'http://')</p>
+				</div>
+				
+				<div class="form-field">
+				    <label for="desc">描述</label>
+				    <textarea cols="40" rows="5" id="desc" name="desc" style="width:100%;"></textarea>
+				    <p>这个当你把光标移动到链接表上的链接时它会显示出来，或者显示在链接下方。</p>
+				</div>
+				<p class="submit"><input class="button button-primary" name="submit" value="添加链接" type="submit"></p>
+				</form>
+				</div>
+				
+			</div>
+		</div>
+		<div id="col-right">
+			
+		<div class="col-wrap">
+		<form id="posts-filter" action="/admin/link/delete" method="post">
+		<div class="tablenav">
+		
+		<div class="alignleft actions">
+			<select name="action">
+			<option value="" selected="selected">批量动作</option>
+			<option value="delete">删除</option>
+			</select>
+			<input value="应用" name="doaction" id="doaction" class="button-secondary action" type="submit">
+		</div>
+		
+		<br class="clear">
+		</div>
+		
+		<div class="clear"></div>
+		
+		<table class="widefat tag fixed" cellspacing="0">
+			<thead>
+			<tr>
+			<th scope="col" id="cb" class="manage-column column-cb check-column" style=""><input type="checkbox"  onclick="$('input[name=checks]').attr('checked',this.checked);"></th>
+			<th scope="col" class="manage-column column-name" style="">名称</th>
+			<th scope="col" class="manage-column column-slug" style="">链接</th>
+			<th scope="col" class="manage-column column-posts num" style="">描述</th>
+			</tr>
+			</thead>
+		
+			<tfoot>
+			<tr>
+			<th scope="col" class="manage-column column-cb check-column" style=""><input type="checkbox"  onclick="$('input[name=checks]').attr('checked',this.checked);"></th>
+			<th scope="col" class="manage-column column-name" style="">名称</th>
+			<th scope="col" class="manage-column column-slug" style="">链接</th>
+			<th scope="col" class="manage-column column-posts num" style="">描述</th>
+			</tr>
+			</tfoot>
+
+			<tbody id="the-list" class="list:tag">
+				{% for link in links %}
+				<tr id="tag-{{link.id}}" class="iedit alternate">
+				<th scope="row" class="check-column"> 
+				<input name="checks" value="{{link.id}}" type="checkbox"></th>
+					<td class="name column-name">
+						<strong>
+							<a class="row-title" href="/admin/link/edit/{{link.id}}" title="编辑 &quot;{{ link.name }}&quot;">{{ link.name }}</a>
+						</strong>
+					</td>
+					<td class="slug column-slug">
+					<a class="row-title" href="{{ link.url }}" title=" &quot;{{link.name}}&quot;" target="_blank">{{ link.url }}</a>
+					</td>
+					<td class="posts column-posts num">{{link.description}}</td>
+				</tr>
+				{% else %}
+				<tr class="iedit alternate">
+				<td colspan="4" align="center" style="font-size: 16px;">现在还没有链接,赶紧添加一个</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		
+		<!-- here can be links pagenavi-->
+		
+		<br class="clear">
+		</form>
+		</div>	
+		</div>
+	</div>
+</div>
+{% endblock %}

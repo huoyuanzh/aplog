@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="wrap">
+	{% if content_type == "post" %}
+		{% if action == "add" %}
+			<h2>添加新文章</h2>
+		{% else %}
+			<h2>编辑文章</h2>
+		{% endif %}
+	{% else %}
+		{% if action == "add" %}
+			<h2>添加新页面</h2>
+		{% else %}
+			<h2>编辑页面</h2>
+		{% endif %}
+	{% endif%}
+	
+	<!-- render the message if exist -->
+	{% if msg %}
+	<div align="center" style="background-color: rgb(255, 251, 204);">
+		<p>
+		<strong>{{ msg }}</strong> 
+		</p>
+	</div>
+	{% endif %}
+	<form action="" method="post">
+		<input type="hidden" name="action" value="{{action}}"/>
+		<input type="hidden" name="postid" {% if post %}value="{{post.id}}"{% endif %}/>
+		<input type="hidden" name="status" {% if post %}value="{{post.status}}"{% endif %}/>
+		<input type="hidden" name="content_type" value="{{content_type}}"/>
+		<div id="poststuff" class="metabox-holder">
+			<div id="side-info-column" class="inner-sidebar">
+				<div id="side-sortables" class="meta-box-sortables ui-sortable" stype="position: relative;">
+					{% if content_type == "post" %}
+						<div id="tagsdiv" class="postbox">
+							<h3 class="hndle"><span>标签</span></h3>
+							
+							<input type="text" name="tags" id="tags" {% if post %}value="{{tags}}"{% endif %}/>    <!--  还需要把tags实现  put an eye here  -->
+							<p><b>多个标签请用英文逗号分开</b></p>
+						</div>
+					
+						<div id="categorydiv" class="postbox">
+							<h3 class="hndle"><span>目录</span></h3>
+							<div id="allcategorys">
+							{% if cates %}
+								<select id='categories' name="category" multiple="multiple">
+									{% for cate in cates %}
+										<option value="{{cate.id}}" {% if cate.selected %}selected="selected"{% endif %}>{{cate.name}}</option>
+									{% endfor %}
+								</select>          
+							{% else %}
+								<p>还没有分类目录,<a href="/admin/categories">添加</a>一个</p>
+							{% endif %}
+							</div>
+							<p><b></b></p>
+						</div>
+					{% else %}
+						<div id="tagsdiv" class="postbox">
+							<h3 class="hndle"><span>属性</span></h3>
+							<p>页面顺序<input type="text" name="order" id="order" {% if post %}value="{{ post.menu_order }}"{% endif %}/></p><br/>
+							<p><b></b></p>
+						</div>
+					{% endif %}
+					<div id="submitdiv" class="postbox">
+						<h3 class="hndle"><span>发布</span></h3>
+						<div id="submitpost">
+							<div id="minor-publishing-actions">
+							
+							<span id="sticky-span" style="display: inline;">
+							<input type="checkbox" tabindex="4" value="sticky" name="sticky" id="sticky" {% if post and post.sticky %} checked{% endif %}> 
+							<label class="selectit" for="sticky">置顶这篇文章到首页</label>
+							<br>
+							</span> 
+							
+							<span style="display:inline;">
+								<input type="checkbox" checked="checked" value="open" id="comment_status" name="comment_status"> 
+							<label class="selectit" for="sticky">这篇文章接受评论</label><br/>
+							</span>
+							<div id="save-action" class="alignleft">
+							<input type="submit" class="button button-highlighted" tabindex="4" value="保存" id="save-post" name="save">
+							</div>
+							<div id="preview-action" >
+								{% if post and post.status == "publish" %}
+									<input type="submit" value="取消发布" accesskey="p" tabindex="5" id="publish" class="button-primary alignright" name="unpublish">
+								{% else %}
+									<input type="submit" value="发布" accesskey="p" tabindex="5" id="publish" class="button-primary alignright" name="publish">
+								{% endif %}
+							</div>
+							<div class="clear"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="post-body" class="has-sidebar">
+				<div id="post-body-content" class="has-sidebar-content">
+					<div id="titlediv">
+						<div id="titlewrap">
+							<input type="text" autocomplete="off" id="title" tabindex="1" size="30" name="title" {% if post %}value="{{ post.title }}"{% endif %}/>
+						</div>
+					</div>
+					<div id="postdivrich" class="postarea">
+						<textarea rows="18" cols="40" name="content" tabindex="2" id="content">{% if post %}{{ post.content }}{% endif %}</textarea>
+					</div>
+					<div id="normal-sortables" class="meta-box-sortables ui-sortable" stype="position: relative;">
+						<div id="postslug" class="postbox">
+							<h3 class="hndle">Slug</h3>
+							<div id="titlewrap">
+								<input type="text" autocomplete="off" id="slug" tabindex="1" size="30" name="slug" {% if post %}value="{{post.slug|default('', true)}}"{% endif %}/>
+							</div>
+							<p><b><b>Slug可以提高 URLs 的可读性和对搜索引擎的友好程度</b></b></p>
+							
+						</div>
+						<div id="postexcerpt" class="postbox">
+							<h3 class="hndle">摘要</h3>
+							<textarea id="excerpt" tabindex="6" name="excerpt" cols="40" rows="2">{% if post %}{{ post.excerpt|default('', true)|striptags}}{% endif %}</textarea>
+							<p><b><b>摘要是您手动添加的内容概要。</b></b></p>
+						</div>
+					</div>
+				</div>
+			</div>
+			<b><b><br class="clear"></br></b></b>
+		</div>
+	</form>
+</div>
+
+<!-- use tinymce -->
+<script type="text/javascript" src="/static/tiny_mce/tiny_mce.js"></script>
+<script type="text/javascript">
+        tinyMCE.init({
+                // General options
+                mode : "exact",
+				elements: "content",
+                theme : "advanced",
+                plugins : "safari,pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template",
+                // Theme options
+                theme_advanced_buttons1 : "save,newdocument,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,styleselect,formatselect,fontselect,fontsizeselect",
+                theme_advanced_buttons2 : "cut,copy,paste,pastetext,pasteword,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,image,cleanup,help,code,|,insertdate,inserttime,preview,|,forecolor,backcolor",
+                theme_advanced_buttons3 : "tablecontrols,|,hr,removeformat,visualaid,|,sub,sup,|,charmap,emotions,iespell,media,advhr,|,print,|,ltr,rtl,|,fullscreen",
+                theme_advanced_buttons4 : "insertlayer,moveforward,movebackward,absolute,|,styleprops,|,cite,abbr,acronym,del,ins,attribs,|,visualchars,nonbreaking,template,pagebreak",
+                theme_advanced_toolbar_location : "top",
+                theme_advanced_toolbar_align : "left",
+                theme_advanced_statusbar_location : "bottom",
+                theme_advanced_resizing : true,
+        });
+</script>
+{%endblock%}

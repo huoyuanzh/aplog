@@ -1,0 +1,168 @@
+﻿{% extends "base.html" %}
+{% block title %}Aplog - {{ post.title }}{% endblock %}
+
+{% block content %}
+	<div class="post hentry">
+		<h2 id="post-6" class="entry-title"><a href="{{ post.get_absolute_url }}" rel="bookmark">{{ post.title }}</a></h2>
+		<p class="comments"><a href="{{ post.get_absolute_url }}#comments">{{ post.comment_count }} comments</a></p>
+		
+		<!-- post content -->
+		<div class="main entry-content group">
+			<p>{{ post.text|safe }}</p>
+		</div>
+		
+		<!-- meta data of the post -->
+		<div class="meta group">
+			<div class="signature">
+				<p class="author vcard">Written by <span class="fn">Lucian Marin</span> <span class="edit"></span></p>
+				<p><abbr class="updated" title="{{ post.created|date:'N jS, Y'}}">{{ post.created|date:"N jS, Y \a\t P"}}</abbr></p>
+			</div>	
+			<div class="tags">
+				<p>Posted in
+					{% for cate in post.term.all %}
+						{% ifequal cate.term_type "category" %}
+							<a href="{{ cate.get_absolute_url }}" title="View all posts in {{ cate.slug }}" rel="category tag">{{ cate.name }}</a>,
+						{% endifequal %}
+					{% endfor %}
+				</p>
+				
+				<p>Tagged with
+					{% for tag in post.term.all %}
+						{% ifequal tag.term_type "tag" %}
+							<a href="{{ tag.get_absolute_url }}" rel="tag">{{ tag.name }}</a>,
+						{% endifequal %}
+					{% endfor %}
+				</p>
+			</div>
+		</div>
+		<br />
+	</div>
+	
+	<!-- next and previous one post navigation -->
+	<div class="navigation group">
+		{% if post.get_prev %}
+			<div class="alignleft"><a href="{{ post.get_prev.get_absolute_url }}">&laquo; {{ post.get_prev.title }}</a></div>
+		{% endif %}
+		{% if post.get_next %}
+			<div class="alignright"><a href="{{ post.get_next.get_absolute_url }}">&raquo; {{ post.get_next.title }}</a></div>
+		{% endif %}
+	</div>
+	
+	
+	<!-- comments starts -->
+	<a name="comments" id="comments"></a>
+	<h3 class="reply">{{ post.comment_count }} Responses to '{{ post.title }}'</h3>
+	<p class="comment_meta">Subscribe to comments with <a href='http://lucianmarin.com/test/archives/6/feed'>RSS</a> 
+	or <a href="http://lucianmarin.com/test/archives/6/trackback" rel="trackback">TrackBack</a> to 'Test or taste it'.
+	<a href="#respond">添加评论</a></p>
+
+	<ol class="commentlist">
+		
+		{% for comment in post.get_comments %}
+		{% ifequal comment.author "huoyuanzh" %}<li id="comment-{{ comment.id }}" class="byuser comment-author-admin bypostauthor">
+		{% else %}<li id="comment-{{ comment.id }}" class="">
+		{% endifequal %}
+			<div class="comment_mod">
+			</div>
+	
+			<div class="comment_text">
+				<p>{{ comment.text|safe|escape }}</p>
+			</div>
+	
+			<div class="comment_author">
+				<img alt='' src='http://www.gravatar.com/avatar/6d930ac517d06a0d70f9dc0c76e9dbcb?s=32&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D32&amp;r=G' class='avatar avatar-32' height='32' width='32' />
+				<p><strong><a href="{{ comment.url }}" rel='external nofollow'>{{ comment.author }}</a></strong></p>
+				<p><small> {{ comment.created|date:"j M y \a\t P"}} </small></p>
+			</div>
+			<div class="clear"></div>
+		</li>
+		{% endfor %}
+		
+		<!-- 普通评论者 -->
+		<li id="comment-1" class="">
+			<div class="comment_mod">
+			</div>
+	
+			<div class="comment_text">
+				<p>Thanks for the theme. It&#8217;s very clean, however is there a way to put the page navigation below the header instead of using the &#8220;page&#8221;
+				widget on the sidebar?</p>
+			</div>
+	
+			<div class="comment_author">
+				<img alt='' src='http://www.gravatar.com/avatar/6d930ac517d06a0d70f9dc0c76e9dbcb?s=32&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D32&amp;r=G' class='avatar avatar-32' height='32' width='32' />
+				<p><strong><a href='http://www.knoizki.net' rel='external nofollow'>K</a></strong></p>
+				<p><small>20 Dec 07 at <a href="#comment-11">4:03 pm</a> </small></p>
+			</div>
+			<div class="clear"></div>
+		</li>
+		
+		<!-- 管理员 -->
+		<li id="comment-2" class="byuser comment-author-admin bypostauthor">
+			<div class="comment_mod">
+			</div>
+	
+			<div class="comment_text">
+				<p>@K<br />
+				I&#8217;ll see if is possible to implement one single widget in a different part of the layout. It&#8217;s a good idea.</p>
+				<p>@mLab<br />
+				I heard about RSS links feature about couple of times, it will be done.</p>
+			</div>
+	
+			<div class="comment_author">
+				<img alt='' src='http://www.gravatar.com/avatar/a06d4b70806b8d57689b6df3aa82bd5e?s=32&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D32&amp;r=G' class='avatar avatar-32' height='32' width='32' />
+				<p><strong><a href='http://lucianmarin.com/' rel='external nofollow'>Lucian</a></strong></p>
+				<p><small>21 Dec 07 at <a href="#comment-14">2:07 am</a> </small></p>
+			</div>
+			<div class="clear"></div>
+		</li>
+
+	</ol>
+
+
+
+
+	<a name="respond" id="respond"></a>
+
+	<h3 class="reply">Leave a Reply</h3>
+
+	<!-- THE COMMENT FORM -->
+	<form action="" method="post" id="commentform">
+		<div class="postinput">
+			{{ form.author.errors }}
+			<p>{{ form.author }}<label for="author"><small>Name (required)</small></label></p>
+			{{ form.email.errors }}
+			<p>{{ form.email }}<label for="email"><small>Mail (will not be published) (required)</small></label></p>
+			{{ form.url.errors }}
+			<p>{{ form.url }}<label for="url"><small>Website</small></label></p>
+			<!--<p><small><strong>XHTML:</strong> You can use these tags: &lt;a href=&quot;&quot; title=&quot;&quot;&gt; &lt;abbr title=&quot;&quot;&gt; &lt;acronym title=&quot;&quot;&gt; &lt;b&gt; &lt;blockquote cite=&quot;&quot;&gt; &lt;cite&gt; &lt;code&gt; &lt;del datetime=&quot;&quot;&gt; &lt;em&gt; &lt;i&gt; &lt;q cite=&quot;&quot;&gt; &lt;strike&gt; &lt;strong&gt; </small></p>-->
+			{{ form.text.errors }}
+			<p>{{ form.text }}</p>
+			<p><input class="submit" name="submit" type="submit" id="submit" tabindex="5" value="Submit Comment" title="Please review your comment before submitting" />
+				<input type="hidden" name="comment_post_ID" value="6" />
+			</p>
+		</div>
+	</form>
+	<!-- END COMMENT FORM -->
+
+	<!-- a tes comment form 
+	<form action="/submitcomment" method="post" id="commentform">
+		<div class="postinput">
+			<p><input class="comment" type="text" name="author" id="author" value="" size="22" tabindex="1" />
+				<label for="author"><small>Name (required)</small></label></p>
+
+			<p><input class="comment" type="text" name="email" id="email" value="" size="22" tabindex="2" />
+				<label for="email"><small>Mail (will not be published) (required)</small></label></p>
+
+			<p><input class="comment" type="text" name="url" id="url" value="" size="22" tabindex="3" />
+				<label for="url"><small>Website</small></label></p>
+			<p><textarea name="comment" id="comment" cols="100%" rows="10" tabindex="4"></textarea></p>
+
+			<p><input class="submit" name="submit" type="submit" id="submit" tabindex="5" value="Submit Comment" title="Please review your comment before submitting" />
+				<input type="hidden" name="comment_post_ID" value="6" />
+			</p>
+		</div>
+	</form> test end -->
+	
+{% endblock %}
+
+

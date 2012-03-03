@@ -1,0 +1,47 @@
+﻿{% load sidebar %}
+
+<div id="sidebar">
+	<!-- search form -->
+	<form id="searchform" method="get" action="{% url blog-search %}">
+		<div>
+			<input type="text" name="s" id="s" size="15" /><br />
+			<input type="submit" value="Search" />
+		</div>
+	</form>
+	<!-- END searchform -->
+				
+	<!--  blog pages -->
+	<h3>Pages</h3>
+		{% get_menus %}
+	
+	<!-- archives by date -->
+	<h3>Archives</h3>
+		{% get_archives %}
+	<h3>test</h3>
+	<ul>
+		<li><a href="http://www.bogdangheorghe.ro/">Bogdan Gheorghe</a></li>
+		<li><a href="http://www.futilitycloset.com/">Futility Closet</a></li>
+		<li><a href="http://smarterware.org/">Gina Trapani</a></li>
+		<li><a href="http://internetducttape.com/">Internet Duct Tape</a></li>
+		<li><a href="http://lucianboariu.ro/">Lucian Boariu</a></li>
+		<li><a href="http://www.mikechambers.com/blog/">Mike Chambers</a></li>
+		<li><a href="http://www.victorkapra.ro/">Victor Kapra</a></li>
+		<li><a href="http://wordpress.com">WordPress.com</a></li>
+
+	</ul>
+	
+	<!-- category here -->
+	<h3>Categories</h3>
+		{% get_categories %}
+	
+	
+	<!-- tag here -->
+	<h3>Tags</h3>
+		{% get_tag_cloud %}
+		
+	<!-- blogroll -->
+	<h3>Blogroll</h3>
+		{% get_links %}
+	
+		
+</div>

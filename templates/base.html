@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+					  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN">
+<head>
+	<title>{% block title %}{% endblock %}</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="description" content="a personal blog" />
+	<link href="/static/css/style.css" rel="stylesheet" type="text/css" media="screen" />
+	<link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico" />	
+	<style type="text/css">.recentcomments a{display:inline !important;padding: 0 !important;margin: 0 !important;}</style>
+		
+</head>
+
+
+<body>
+	<div id="container" class="group">
+		<h1><a href="/">Aplog</a></h1>
+		<div id="content">
+			{% block content %}{% endblock %}
+		</div>
+		
+		<!-- sidebar here -->
+		{% include "sidebar.html" ignore missing %}
+		<!-- sidebar ends here -->
+		
+	</div>
+	
+	<!-- footer here -->
+	<div id="footer">
+	<p>&copy;2012  Template modified from <a href="http://lucianmarin.com/page/themes" rel="designer">Journalist</a> &mdash; Powered by <a href="http://webpy.org">web.py</a></p>
+	</div>
+	
+</body>
+</html>

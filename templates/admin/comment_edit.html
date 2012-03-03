@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="wrap">
+ 	<h2>编辑评论</h2>
+	{% if msg %}
+	<div align="center" style="background-color: rgb(255, 251, 204);">
+		<p>
+		<strong>{{ msg }}</strong> 
+		</p>
+	</div>
+	{% endif %}
+ 	<form method="post" action="">
+ 	<div class="metabox-holder">
+ 		<div class="inner-sidebar" id="side-info-column">
+			<div class="stuffbox" id="submitdiv">
+			<h3><span class="hndle">状态</span></h3>
+			<div class="inside">
+			<div id="submitcomment" class="submitbox">
+				<div id="minor-publishing">
+					<div id="minor-publishing-actions">
+						<div id="preview-action">
+							<a target="_blank" href="{{comment.get_absolute_url()}}" class="alignright button">查看评论</a>
+						</div>
+						<div class="clear"></div>
+					</div>
+					<div id="misc-publishing-actions">
+						<div id="comment-status-radio" class="misc-pub-section">
+							<label class="waiting"><input type="radio" value="waiting" name="comment_status" {% if comment.status == 'spam' %}checked="checked"{% endif %}>等待</label><br />
+							<label class="approved"><input type="radio" name="comment_status" value="approved" {% if comment.status == 'approved' %}checked="checked"{% endif %}>获准</label><br />
+							<label class="spam"><input type="radio" value="spam" name="comment_status" {% if comment.status == 'spam' %}checked="checked"{% endif %}>垃圾评论</label>
+						</div>
+					</div>
+				<div class="clear"></div>
+				</div>
+			
+				<div id="major-publishing-actions">
+				<div id="delete-action">
+				<a onclick="if ( confirm('您将删除评论 \n您确定么？') ) { return true;}return false;" href="/admin/comment/delete/{{comment.id}}" class="submitdelete deletion">删除</a>
+				</div>
+				<div id="publishing-action">
+				<input type="submit" class="button-primary" tabindex="4" value="更新评论" name="save">
+				</div>
+				<div class="clear"></div>
+				</div>
+			</div>
+			</div>
+			</div>
+		</div>
+		<div id="postbody" class="has-sidebar">
+			<div class="has-sidebar-content">
+				<div class="stuffbox" id="namediv">
+					<h3><label for="author">作者</label></h3>
+					<div class="inside">
+					<table class="form-table">
+					<tbody>
+					<tr valign="top">
+						<td class="first">名称：</td>
+						<td><input type="text" id="author" tabindex="1" value="{{comment.author}}" size="30" name="author"></td>
+					</tr>
+					<tr valign="top">
+						<td class="first">
+						电子邮件(<a href="mailto:{{comment.email}}">发送电子邮件</a>)：</td>
+						<td><input type="text" id="email" tabindex="2" value="{{comment.email}}" size="30" name="email"></td>
+					</tr>
+					<tr valign="top">
+						<td class="first">
+						URL：</td>
+						<td><input type="text" tabindex="3" value="{{comment.url|default('', true)}}" size="30" name="url" id="url"></td>
+					</tr>
+					</tbody>
+					</table>
+					<br>
+					</div>
+				</div>
+				<div id="postdiv" class="postarea">
+					<div id='editorcontainer'><textarea rows='10' cols='40' name='content' tabindex='4' id='content'>{{comment.content}}</textarea></div>
+				</div>
+			</div>
+		</div>
+ 	</div>
+ 	</form>
+</div>
+
+{%endblock%}

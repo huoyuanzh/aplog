@@ -1,0 +1,66 @@
+{%extends "admin/base.html"%}
+{%block content%}
+<div class="wrap">
+	<h2>标签</h2>
+	<div id="col-container">
+		<div id="col-right">
+		<div class="col-wrap">
+		<form id="posts-filter" action="/admin/tag/delete" method="post">
+		<div class="clear"></div>
+		<table class="widefat tag fixed" cellspacing="0">
+			<thead>
+			<tr>
+			<th scope="col" class="manage-column column-name" style="">名称</th>
+			<th scope="col" class="manage-column column-slug" style="">别名</th>
+			<th scope="col" class="manage-column column-posts num" style="">数量</th>
+			</tr>
+			</thead>
+		
+			<tfoot>
+			<tr>
+			<th scope="col" class="manage-column column-name" style="">名称</th>
+			<th scope="col" class="manage-column column-slug" style="">别名</th>
+			<th scope="col" class="manage-column column-posts num" style="">数量</th>
+			</tr>
+			</tfoot>
+
+			<tbody id="the-list" class="list:tag">
+				{%if tags.object_list%}
+				{%for tag in tags.object_list%}
+				<tr id="tag-{{tag.id}}" class="iedit alternate">
+					<td class="name column-name">
+						<strong>
+							<a class="row-title" href="/admin/tags" title="编辑 &quot;{{tag.name}}&quot;">{{tag.name}}</a>
+						</strong>
+					</td>
+					<td class="slug column-slug">{{tag.slug}}</td>
+					<td class="posts column-posts num">{{tag.count}}</td>
+				</tr>
+				{%endfor%}
+				{%else%}
+				<tr>
+					<td colspan="4" align="center">暂时还没有标签</td>
+				</tr>
+				{%endif%}
+			</tbody>
+</table>
+
+	<div class="tablenav">
+		{%if tags.object_list%}
+		<div class="pagenav">
+			{%if tags.has_previous%}
+			<a href="?page={{tags.previous_page_number}}">上一页</a>
+			{%endif%}
+			{%if tags.has_next%}<a href="?page={{tags.next_page_number}}">下一页</a>{%endif%}
+		</div>
+		{%endif%}
+	</div>
+
+<br class="clear">
+</form>
+</div>
+			
+		</div>
+	</div>
+</div>
+{%endblock%}

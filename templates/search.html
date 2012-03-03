@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Aplog{% endblock %}
+
+{% block content %}
+<h2 class="archive">Search results for &#8216;{{ query }}&#8217;</h2>
+	{% for post in posts %}
+		<div class="post hentry">
+			<h2 id="post-{{ post.id }}" class="entry-title"><a href="{{ post.get_absolute_url() }}" rel="bookmark">{{ post.title }}</a></h2>
+			<p class="comments"><a href="{{ post.get_absolute_url() }}#comments">{{ post.comment_count }} comments</a></p>
+		
+			<!-- post excerpt -->
+			<div class="main entry-content group">
+				<p>{{ post.content }}  <a href="{{ post.get_absolute_url() }}">...Read more</a></p>
+			</div>
+		
+			<br /><br />
+		</div>
+	{% else %}
+		<h2> Not found.</h2>
+	{% endfor %}
+	
+
+{% endblock %}
+
+

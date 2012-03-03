@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="wrap">
+ 	<h2>编辑页面</h2>
+ 	<form id="posts-filter" action="/admin/page/delete" method="post">
+ 		<ul class="subsubsub">
+ 			<li>
+ 				<a href="/admin/pages">
+ 				全部<span class="count">({{ all_count }})</span>
+ 				</a>
+ 				|
+ 			</li>
+ 			<li>
+ 				<a href="/admin/pages?status=publish">
+ 				已发布<span class="count">({{ publish_count }})</span>
+ 				</a>
+ 			</li>
+ 		</ul>
+ 		<p class="search-box hidden">
+			<label class="hidden" for="post-search-input">搜索文章:</label>
+			<input class="search-input" id="post-search-input" name="s" value="" type="text">
+			<input value="搜索文章" class="button" type="submit">
+ 		</p>
+ 		<div class="tablenav">
+ 			<div class="alignleft actions">
+			<input type="submit" class="button-secondary action" id="doaction" name="delete" value="批量删除">
+ 			</div>
+ 		</div>
+ 		<div class="clear"></div>
+ 		<table class="widefat">
+			<thead>
+				<tr>
+				<th scope="col" class="check-column">
+				<input type="checkbox" onclick="$('input[name=checks]').attr('checked',this.checked);"></th>
+				<th>标题</th>
+				<th>作者</th>
+				<th style="width: 15%;">日期</th>
+				<th scope="col" class="num"><div class="vers"><img alt="Comments" src="/static/images/comment-grey-bubble.png"></div></th>
+				<th>状态</th><th>允许评论</th></tr>
+			</thead>
+			<tfoot>
+				<tr>
+				<th scope="col" class="check-column">
+				<input type="checkbox" onclick="$('input[name=checks]').attr('checked',this.checked);"></th>
+				<th>标题</th>
+				<th>作者</th>
+				<th style="width: 15%;">日期</th>
+				<th scope="col" class="num"><div class="vers"><img alt="Comments" src="/static/images/comment-grey-bubble.png"></div></th>
+				<th>状态</th><th>允许评论</th></tr>
+			</tfoot>
+			<tbody>
+        {% for page in pages %}
+		<tr valign="middle" id="link-474002">
+			<th scope="row" class="check-column">
+				<input type="checkbox" name="checks" value="{{page.id}}">
+			</th>
+			<td> 
+              	<a href="/admin/page/edit/{{page.id}}" title="Edit &quot;{{page.title}}&quot;" style="color: gray;" class="row-title">[编辑]</a> 
+              	<strong>
+              		{% if page.status == "publish" %}
+              		<a target="_blank" href="{{ page.get_absolute_url() }}" title="{{page.title}}" class="row-title">{{page.title}}</a>
+              		{% else %}
+              		<a target="_self" href="/admin/page/edit/{{page.id}}" title="Edit &quot;{{page.title}}&quot;" class="row-title">{{page.title}}</a>
+              		{% endif %}
+              	</strong>
+              </td>             
+              <td>{{ page.author.name }}</td>
+			  <td>{{ page.created }}</td>
+              <td scope="col" class="num">{{ page.comment_count }}</td>
+              <td>{% if page.status=="publish" %}发布{% else %}未发布{% endif %}</td>
+              <td>{% if page.comment_status %}Yes{% else %}No{% endif %}</td>
+		</tr>
+		{% else %}
+		<tr>
+			<td colspan="7" align="center" style="font-size: 16px;">还没有新文章,<a href="/admin/page/add">添加</a>一篇吧</td>
+		</tr>
+		{% endfor %}
+			</tbody>
+		</table>
+ 	</form>
+ 	
+</div>
+{% endblock %}
