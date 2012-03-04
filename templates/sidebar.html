@@ -12,6 +12,7 @@
 	<h3>Pages</h3>
 		<ul>
 		<li class="page_item page-item-0"><a href="/" title="home">Home</a></li>
+		<li class="page_item page-item-0"><a href="/feed" title="feed">Feed</a></li>
 		{% for page in widget.pages %}
 		<li class="page_item page-item-0"><a href="{{ page.get_absolute_url() }}" title="{{ page.title }}">{{ page.title }}</a></li>
 		{% endfor %}
@@ -20,16 +21,12 @@
 	<!-- archives by date -->
 	<h3>Archives</h3>
 		<ul>
-		<li><a href="http://www.bogdangheorghe.ro/">Bogdan Gheorghe</a></li>
-		<li><a href="http://www.futilitycloset.com/">Futility Closet</a></li>
-		<li><a href="http://smarterware.org/">Gina Trapani</a></li>
-		<li><a href="http://internetducttape.com/">Internet Duct Tape</a></li>
-		<li><a href="http://lucianboariu.ro/">Lucian Boariu</a></li>
-		<li><a href="http://www.mikechambers.com/blog/">Mike Chambers</a></li>
-		<li><a href="http://www.victorkapra.ro/">Victor Kapra</a></li>
-		<li><a href="http://wordpress.com">WordPress.com</a></li>
+		{% for archive in widget.archives %}
+			<li><a href="/archives/{{archive.date.year}}/{{archive.date.month}}" title="{{archive.date.month}} {{archive.date.year}}">
+					{{ archive.date.strftime("%B")}} {{ archive.date.year }}</a>&nbsp; ({{ archive.count}})</li>
+		{% endfor %}
 		</ul>
-	
+		
 	<h3>Recent Comments</h3>			
 		<ul id="recentcomments">
 		{% for comment in widget.recentcomments %}

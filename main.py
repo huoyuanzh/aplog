@@ -16,6 +16,7 @@ urls = (
     '/search', 'search',
     '/archive/([-\w]+)', 'singlepost',
     '/page/([-\w]+)', 'singlepost',
+    '/feed', 'feed',
 )
 
 app = web.application(urls, globals(), autoreload=True)

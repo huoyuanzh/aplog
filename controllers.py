@@ -2,12 +2,13 @@
 #-*-coding:utf-8-*-
 
 import web
-from sqlalchemy import and_, or_
+from sqlalchemy import and_, or_, extract
 from markdown import markdown
 
 from models import *
 from config import *                                   # render for jinja2
 from forms import comment_form
+from akismet import Akismet
 import sidebar
 
 
@@ -68,7 +69,36 @@ class singlepost:
         except:
             post = self.get_post_by_slug(arg)
         return post
-    
+
+    # validate comment with akismet
+    def validate_comment(self, comment):
+        akismet_enable = web.ctx.orm.query(Option).filter(Option.name=='comment_akismet_enable').first()
+        if (not akismet_enable) or (not akismet_enable.value):
+            return
+        akismet_key = web.ctx.orm.query(Option).filter(Option.name=='comment_akismet_key').first()
+        domain = web.ctx.get('homedomain', '')
+        # create an Akismet instance
+        ak = Akismet(
+            key=akismet_key.value,                  # akismet key
+            blog_url=domain                         # your blog url
+        )
+        try:
+            if ak.verify_key():
+                data = {
+                    'user_ip': web.ctx.get('ip', ''),
+                    'user_agent': web.ctx.env.get('HTTP_USER_AGENT', ''),
+                    'referer': web.ctx.env.get('HTTP_REFERER', 'unknown'),
+                    'comment_type': 'comment',
+                    'comment_author': comment.author.encode('utf-8')
+                }
+                if ak.comment_check(comment.content.encode('utf-8'), data=data, build_data=True):
+                    comment.status = 'spam'
+                    ak.submit_spam(comment.content.encode('utf-8'), data=data, build_data=True)
+                    
+        except AkismetError:
+            pass
+                
+        
     def GET(self, arg):
         post = self.get_post(arg)
         f = comment_form()
@@ -97,6 +127,7 @@ class singlepost:
             web.ctx.orm.add(comment)
             post.comment_count += 1                   # update the comment_count of this post
             post.view_count -= 1                      # as we will redirect to the same page next, so~
+            self.validate_comment(comment)
             web.ctx.orm.commit()
             web.seeother(comment.get_absolute_url())
 
@@ -147,9 +178,11 @@ class tag:
 # posts by specific date
 class archives:
     def getPostByMonth(self, year, month):
-        posts = web.ctx.orm.query(Post).filter(and_(Post.content_type=='post', Post.status=='publish')).\
-                                       filter(Post.created.year==int(year)).\
-                                       filter(Post.created.month==int(month)).order_by('posts.created DESC')
+        posts = web.ctx.orm.query(Post).\
+                filter(and_(Post.content_type=='post', Post.status=='publish')).\
+                filter(extract('year', Post.created)==int(year)).\
+                filter(extract('month', Post.created)==int(month)).\
+                order_by('posts.created DESC')
         return posts
         
     def GET(self, year, month):
@@ -183,5 +216,12 @@ class search(object):
                              order_by("posts.created DESC")
         return render.search(posts=posts, query=keyword[1:-1], page=page, widget=get_sidebar())
 
-        
+# rss feed                                                        
+class feed:
+    def GET(self):
+        posts = web.ctx.orm.query(Post).filter(Post.content_type=='post').\
+                order_by("posts.created DESC").all()[:10]
+        web.header('Content-Type', 'text/xml')
+        domain = web.ctx.get('homedomain', 'http://example.com')
+        return render_template('feed.xml', domain=domain, posts=posts)
         

@@ -13,10 +13,10 @@
 	{% for post in posts %}
 		<div class="post hentry">
 			<h2 id="post-{{ post.id }}" class="entry-title"><a href="{{ post.get_absolute_url() }}" rel="bookmark">{{ post.title }}</a></h2>
-			<p class="comments"><a href="{{ post.get_absolute_url() }}#comments">75 comments</a></p>
+			<p class="comments"><a href="{{ post.get_absolute_url() }}#comments">{{ post.comment_count }} comments</a></p>
 
 			<div class="main entry-content">
-				<p>{{ post.excerpt|e|striptags }}</p>
+				<p>{{ post.content|striptags|truncate(300) }}<a href="{{ post.get_absolute_url() }}">...Read more</a></p>
 			</div>
 
 			<br />
@@ -24,14 +24,6 @@
 	{% else %}
 		<h2> Not found.</h2>
 	{% endfor %} 
-	
-	<!-- next and previous one post navigation -->
-	<div class="navigation group">
-		<div class="alignleft"><a href="?page={{ page + 1 }}">&laquo; Older Entries</a></div>
-		{% if page == 1 %}
-			<div class="alignright"><a href="?page={{ page - 1 }}">Newer Entries &raquo;</a></div>
-		{% endif %}
-	</div>
 
 {% endblock %}
 

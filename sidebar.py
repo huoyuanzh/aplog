@@ -6,7 +6,8 @@
 #     use of blog
 ##################################
 import web
-from models import *
+from sqlalchemy import func, extract
+from models import Post, Term, Link, Comment
 
 
 # get pages
@@ -36,6 +37,17 @@ def recentcomments(count=7):
     return web.ctx.orm.query(Comment).filter(Comment.status=='approved').\
            order_by("comments.created DESC")[:count]
 
-# come back later
+# get archives
 def archives():
-    pass
+    archive = web.ctx.orm.query(
+        extract('month', Post.created).label('month'),
+        Post.created,
+        func.count('*').label('count')
+    ).filter(Post.content_type=='post').group_by('month').all()
+    ret = []
+    for month, date, count in archive:
+        d = {}
+        d['date'] = date
+        d['count'] = count
+        ret.append(d)
+    return ret

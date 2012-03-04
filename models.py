@@ -11,6 +11,7 @@ from sqlalchemy import and_, or_
 from sqlalchemy.orm import sessionmaker, relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 
+
 #engine = create_engine('mysql://root:458301@localhost/aplog2?charset=utf8', echo=True)
 engine = create_engine('sqlite:///mydatabase.db', echo=True)
 Base = declarative_base()              # every Mapping class should inherit from this

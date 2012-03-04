@@ -15,7 +15,7 @@
 		<div class="meta group">
 			<div class="signature">
 				<p class="author vcard">Written by <span class="fn">Admin</span> <span class="edit"></span></p>
-				<p><abbr class="updated" title="{{ post.created.strftime("%B %dth, %Y at %I:%M%p") }}">{{ post.created.strftime("%B %dth, %Y at %I:%M%p")	 }}</abbr></p>
+				<p><abbr class="updated" title="{{ post.created.strftime('%B %dth, %Y at %I:%M%p') }}">{{ post.created.strftime("%B %dth, %Y at %I:%M%p")	 }}</abbr></p>
 			</div>	
 			<div class="tags">
 				<p>Posted in
@@ -60,6 +60,7 @@
 	<ol class="commentlist">
 		
 		{% for comment in post.comments %}
+		{% if comment.status != "spam" %}
 		{% if comment.author == admin %}<li id="comment-{{ comment.id }}" class="byuser comment-author-admin bypostauthor">
 		{% else %}<li id="comment-{{ comment.id }}" class="">
 		{% endif %}
@@ -77,6 +78,7 @@
 			</div>
 			<div class="clear"></div>
 		</li>
+		{% endif %}
 		{% endfor %}
 	</ol>
 
