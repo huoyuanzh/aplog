@@ -32,9 +32,7 @@ class login(object):
             if admin:
                 if hashlib.md5(i.password).hexdigest() == admin.password:    # password match ?
                     web.ctx.session.login = 1                                # record login information in session
-                    web.ctx.session.uid = admin.id
-                    web.ctx.session.username = admin.name                        # set username to session
-                    web.ctx.session.email = admin.email                      # set user's email to session
+                    web.ctx.session.admin = admin                            # put current user in session
                     raise web.seeother("/")                                  # redirect to '/admin'
                 else:
                     message = "Wrong password!"
@@ -75,7 +73,7 @@ class quickpost(object):
         tags = i.tags.strip()
         if not (title and content):
             return "<p style='color: red'>Title and content can not be empty!</p>"
-        post = Post(title=title, content=markdown(content))
+        post = Post(title=title, content=markdown(content), author=web.ctx.session.admin)
         for item in tags.split(','):
             tag = web.ctx.orm.query(Term).filter(Term.type=='tag').\
                   filter(Term.name==item.strip()).first()
@@ -140,7 +138,7 @@ class allposts(object):
 class addpost(object):
 
     def get_admin(self):
-        username = web.ctx.session.username
+        username = web.ctx.session.admin.name
         return web.ctx.orm.query(User).filter(User.name==username).first()
 
     # get all categories
@@ -484,7 +482,7 @@ class allpages(object):
 class addpage(object):
 
     def get_admin(self):
-        username = web.ctx.session.username
+        username = web.ctx.session.admin.name
         return web.ctx.orm.query(User).filter(User.name==username).first()
 
     @login_required
@@ -738,8 +736,8 @@ class replycomment(object):
         parent_id = int(i.parent_id)     # not implement yet
         comment = Comment(
             post_id=post_id,
-            author=web.ctx.session.username,
-            email=web.ctx.session.email,
+            author=web.ctx.session.admin.name,
+            email=web.ctx.session.admin.email,
             content=i.comment,
             status='approved'
         )
@@ -948,7 +946,7 @@ class profile(object):
         if uid:
             user = web.ctx.orm.query(User).get(int(uid))
         else:
-            user = web.ctx.orm.query(User).filter(User.id==web.ctx.session.uid).first()
+            user = web.ctx.orm.query(User).filter(User.id==web.ctx.session.admin.id).first()
         if not user: raise web.notfound()
         return admin_render.profile(user=user)
 
