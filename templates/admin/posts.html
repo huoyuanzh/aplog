@@ -10,7 +10,7 @@
 		</p>
 	</div>
 	{% endif %}
- 	<form id="posts-filter" action="/admin/post/bulk-delete" method="post">
+ 	<form id="posts-filter" action="/admin/post/filter" method="post">
  		<ul class="subsubsub">
  			<li>
  				<a href="/admin/posts">全部<span class="count">({{ all_count }})</span></a>|
@@ -27,20 +27,20 @@
  		</p>
  		<div class="tablenav">
  			<div class="alignleft actions">
-			<input type="submit" class="button-secondary action" id="doaction" name="delete" value="批量删除">
-			<select name="m">
-				<option value="0" selected="selected">显示所有日期</option>
-				{%for archive in archives%}
-					<option value="{{archive.id}}">{{archive.year}}-{{archive.month}}</option>
-				{%endfor%}
+			<input type="submit" class="button-secondary action" id="doaction" name="action" value="delete">
+			<select name="date">
+				<option value="" selected="selected">显示所有日期</option>
+				{% for archive in archives %}
+					<option value="{{archive.date.year}}-{{archive.date.month}}">{{archive.date.strftime('%B, %Y')}}</option>
+				{% endfor %}
 			</select>
-			<select name="cate" class="postform" id="cate">
-				<option value="0">查看全部分类目录</option>
+			<select name="category" class="postform" id="category">
+				<option value="">查看全部分类目录</option>
 				{% for cate in categories %}
 					<option value="{{cate.id}}">{{cate.name}}</option>
 				{% endfor %}
 			</select>
-			<input type="submit" class="button-secondary" value="过滤" id="post-query-submit">
+			<input type="submit" class="button-secondary" value="filter" name="action" id="post-query-submit">
  			</div>
  		</div>
  		<div class="clear"></div>

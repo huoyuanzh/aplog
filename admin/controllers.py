@@ -4,9 +4,11 @@ import web
 import hashlib
 from datetime import datetime
 from markdown import markdown
+from sqlalchemy import extract
 
 from config import admin_render, ADMIN_POST_PER_PAGE, ADMIN_COMMENT_PER_PAGE
 from models import *
+from sidebar import archives
 from forms import settings_form
 from admin.utils import post_slug_validates, term_slug_validates
 
@@ -33,6 +35,9 @@ class login(object):
                 if hashlib.md5(i.password).hexdigest() == admin.password:    # password match ?
                     web.ctx.session.login = 1                                # record login information in session
                     web.ctx.session.admin = admin                            # put current user in session
+                    web.ctx.session.uid = admin.id
+                    web.ctx.session.username = i.name
+                    web.ctx.session.email = admin.email
                     raise web.seeother("/")                                  # redirect to '/admin'
                 else:
                     message = "Wrong password!"
@@ -112,13 +117,21 @@ class allposts(object):
             page = 1
         context = {}
         context['page'] = page
+        query = web.ctx.orm.query(Post).filter(Post.content_type=='post')
         if i.get('status', ''):
-            posts = web.ctx.orm.query(Post).filter(Post.content_type=='post').\
-                    filter(Post.status==i.status).order_by("posts.created DESC").all()
+            query = query.filter(Post.status==i.status)
             context['status'] = i.status
-        else:
-            posts = web.ctx.orm.query(Post).filter(Post.content_type=='post').\
-                    order_by("posts.created DESC").all()
+        if i.get('year', '') and i.get('month', ''):
+            query = query.filter(extract('year', Post.created)==int(i.year)).\
+                          filter(extract('month', Post.created)==int(i.month))
+
+        # hasn't figure out how to filter by category yet ......
+        #category = i.get('category', '')
+        #if category:
+        #    term = web.ctx.orm.query(Term).get(int(category))
+        #    posts = term.posts
+
+        posts = query.order_by("posts.created DESC").all()
         post_count = len(posts)
         if post_count != 0 and post_count % ADMIN_POST_PER_PAGE == 0:
             page_count = post_count / ADMIN_POST_PER_PAGE
@@ -131,6 +144,8 @@ class allposts(object):
         context['publish_count'] = self.pub_count()
         context['draft_count'] = context['all_count'] - context['publish_count']
         context['categories'] = web.ctx.orm.query(Term).filter(Term.type=='category').all()
+        context['archives'] = archives()
+        context['current_path'] = ''
         return admin_render.posts(**context)
 
 
@@ -138,7 +153,7 @@ class allposts(object):
 class addpost(object):
 
     def get_admin(self):
-        username = web.ctx.session.admin.name
+        username = web.ctx.session.username
         return web.ctx.orm.query(User).filter(User.name==username).first()
 
     # get all categories
@@ -316,21 +331,42 @@ class delpost(object):
         raise web.seeother(referer)                                      # come back
 
 
-# bulk delete articles
-class delposts(object):
+# filter post or bulk delete articles
+class filterpost(object):
     @login_required
     def POST(self):
         i = web.input(checks=[])
-        for id in i.checks:
-            post = web.ctx.orm.query(Post).filter(Post.id==int(id)).first()
-            for term in post.terms:
-                term.count -= 1
-            for comment in post.comments:
-                web.ctx.orm.delete(comment)
-            web.ctx.orm.delete(post)
-            web.ctx.orm.commit()
-        referer = web.ctx.env.get('HTTP_REFERER', '/posts')
-        raise web.seeother(referer)
+
+        # bulk delete
+        if i.action == 'delete':
+            for id in i.checks:
+                post = web.ctx.orm.query(Post).filter(Post.id==int(id)).first()
+                for term in post.terms:
+                    term.count -= 1
+                for comment in post.comments:
+                    web.ctx.orm.delete(comment)
+                web.ctx.orm.delete(post)
+                web.ctx.orm.commit()
+            referer = web.ctx.env.get('HTTP_REFERER', '/posts')
+            raise web.seeother(referer)
+        # filter posts
+        else:
+            #return "filter some posts here."
+            cate_id = i.category
+            referer = '/posts'                                        # here might be modified "?status="
+            if cate_id:
+                if '?' in referer:
+                    referer += "&category=%s" % cate_id
+                else:
+                    referer += "?category=%s" %cate_id
+            if i.date:
+                year, month = i.date.split('-')
+                if '?' in referer:
+                    referer += "&year=%s&month=%s" % (year, month)
+                else:
+                    referer += "?year=%s&month=%s" % (year, month)
+            raise web.seeother(referer)
+        
 
 # show posts in specific category
 class posts_by_category(object):
@@ -482,7 +518,7 @@ class allpages(object):
 class addpage(object):
 
     def get_admin(self):
-        username = web.ctx.session.admin.name
+        username = web.ctx.session.username
         return web.ctx.orm.query(User).filter(User.name==username).first()
 
     @login_required
@@ -736,8 +772,8 @@ class replycomment(object):
         parent_id = int(i.parent_id)     # not implement yet
         comment = Comment(
             post_id=post_id,
-            author=web.ctx.session.admin.name,
-            email=web.ctx.session.admin.email,
+            author=web.ctx.session.username,
+            email=web.ctx.session.email,
             content=i.comment,
             status='approved'
         )
@@ -946,7 +982,7 @@ class profile(object):
         if uid:
             user = web.ctx.orm.query(User).get(int(uid))
         else:
-            user = web.ctx.orm.query(User).filter(User.id==web.ctx.session.admin.id).first()
+            user = web.ctx.orm.query(User).get(int(web.ctx.session.uid))
         if not user: raise web.notfound()
         return admin_render.profile(user=user)
 

@@ -2,6 +2,7 @@
 #-*- coding:utf-8
 
 import web
+from sqlalchemy import func, extract
 from models import Post, Term
 
 def post_slug_validates(slug, id=None):

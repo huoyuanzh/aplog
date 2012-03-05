@@ -18,7 +18,7 @@ urls = (
     "/post/add", "addpost",
     "/post/edit/(\d+)", "editpost",
     "/post/delete", "delpost",
-    "/post/bulk-delete", "delposts",
+    "/post/filter", "filterpost",
     "/pages", "allpages",
     "/page/add", "addpage",
     "/page/delete", "delpages",

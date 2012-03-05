@@ -12,7 +12,7 @@ from sqlalchemy.orm import sessionmaker, relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 
 
-#engine = create_engine('mysql://root:458301@localhost/aplog2?charset=utf8', echo=True)
+#engine = create_engine('mysql://root:123456@localhost/aplog2?charset=utf8', echo=True)
 engine = create_engine('sqlite:///mydatabase.db', echo=True)
 Base = declarative_base()              # every Mapping class should inherit from this
 
@@ -48,7 +48,7 @@ class Post(Base):
     author = relationship('User', backref=backref('posts', order_by=created))
     
     # many to many: Post <-> Term
-    terms = relationship('Term', secondary=term_relationships, backref='posts')
+    terms = relationship('Term', secondary=term_relationships, backref=backref('posts', order_by=created))
 
 
     def __repr__(self):
@@ -128,7 +128,7 @@ class Comment(Base):
     created = Column(DateTime, default=datetime.now)
     content = Column(Text)
     status = Column(String(10), default='approved')         # 'approved' or 'spam' or 'waiting'
-   # parent_id = Column(Integer, ForeignKey('comments.id'))
+    #parent_id = Column(Integer, ForeignKey('comments.id'))
 
     # many-to-one: Comment <-> Post
     post = relationship('Post', backref=backref('comments', order_by=created))
