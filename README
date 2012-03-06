@@ -1,5 +1,22 @@
 A simple blog powered by web.py
 
-What I use in this project: web.py, sqlalchemy and jinja2
 
-Run models.py to setup databse  before you use it.
+Requirements:
+
+- web.py
+- sqlalchemy
+- jinja2
+- markdown
+
+
+Features:
+        
+- Archives views
+- Categories and tags views
+- Rss feed
+- Comments with spam protection
+- Integrated tinymce editor
+...
+
+
+Run models.py to setup databse first.
