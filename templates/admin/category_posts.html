@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="wrap">
+	<h2>文章分类</h2>
+	<table class="widefat">
+			<thead>
+				<tr>
+				<th scope="col" class="check-column">
+				<input type="checkbox" onclick="$('input[name=checks]').attr('checked',this.checked);"></th>
+				<th style="width:28%;">标题</th>
+				<th>作者</th>
+				<th>分类目录</th>
+				<th>标签</th>
+				<th class="num"><div class="vers"><img alt="Comments" src="/static/images/comment-grey-bubble.png"></div></th>
+				<th style="width: 10%;">日期</th>
+				</tr>
+			</thead>
+			<tfoot>
+				<tr>
+				<th scope="col" class="check-column">
+				<input type="checkbox" onclick="$('input[name=checks]').attr('checked',this.checked);"></th>
+				<th>标题</th>
+				
+				<th>作者</th>
+				<th>分类目录</th>
+				<th>标签</th>
+				<th class="num"><img alt="Comments" src="/static/images/comment-grey-bubble.png"></th>
+				<th >日期</th>
+				</tr>
+			</tfoot>
+			<tbody>
+			{% for post in posts %}
+				<tr valign="middle" id="post-{{post.id}}">
+				<th scope="row" class="check-column">
+				<input type="checkbox" name="checks" value="{{post.id}}">
+				</th>
+				<td> 
+              	<strong>
+              		{% if post.status == "publish" %}
+              		<a target="_blank" href="{{ post.get_absolute_url() }}" title="{{post.title}}" class="row-title">{{post.title}}</a>
+              		{% else %}
+              		<a target="_self" href="/admin/post/edit/{{post.id}}?content_type=post" title="Edit &quot;{{post.title}}&quot;" class="row-title">{{post.title}}</a>
+              		{% endif %}
+              	</strong>
+              	<div class="row-actions">
+	              	<span> <a href="/admin/post/edit/{{post.id}}?content_type=post" title="Edit &quot;{{post.title}}&quot;">编辑</a></span>
+	              	<span class="delete">| <a href="/admin/post/delete?id={{post.id}}">删除</a></span>
+	              	{% if post.status == "publish" %}
+	              	<span class="editor">| 
+              			<a target="_blank" href="{{post.get_absolute_url()}}" title="{{post.title}}">浏览</a>
+              		</span>
+              		{% endif %}
+              	</div>
+				</td>
+				<td>{{ post.author.name }}</td>
+				<td>
+					{% for term in post.terms %}
+						{% if term.type == "category" %}
+							<a href="/admin/category-posts/{{term.slug}}">{{term.name}}</a>
+						{% endif %}
+					{% endfor %}
+				</td>
+				<td>
+					{% for term in post.terms %}
+						{% if term.type == "tag" %}
+							{{ term.name }}
+						{% endif %}
+					{% endfor %}
+				</td>
+				<td class="num">{{ post.comment_count }}</td>
+				<td>{{ post.created }}
+				<br/>{% if post.status == "publish" %}已发布{% else %}未发布{% endif %}
+				</td>
+				</tr>
+			{% else %}
+				<tr>
+				<td colspan="7" align="center" style="font-size: 16px;">还没有新文章,<a href="/admin/post/add">添加</a>一篇吧</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+	</table>
+	{% if posts %}
+ 	{# {% end_pagination %}  #} <!-- 原来的分页代码  -->
+ 	{% endif %}
+</div>
+{%endblock%}

@@ -1,0 +1,53 @@
+{%extends 'admin/base.html'%}
+{%block content%}
+<div class="wrap">
+	<h2>固定链接设置</h2>
+	{%if messages%}
+		<div align="center" style="background-color: rgb(255, 251, 204);">
+			<p>
+			{% for message in messages %}
+			<strong>{{ message }}</strong> 
+			</p>
+			{%endfor%}
+		</div>
+		{%endif%}
+		
+	<form method="post" action="/admin/save_permalink">
+		<p>Youflog 允许您更改默认的链接形式，以此提高 <abbr title="Universal Resource Locator">URL</abbr>s 的可读性和对搜索引擎的友好程度。
+		<a href="http://codex.wordpress.org/Using_Permalinks">参考</a>。</p>
+		<h3>常规设置</h3>
+		<table class="form-table">
+	<tbody><tr>
+		<th><label><input type="radio" {%ifequal permalink_format "archive/%(id)s.html"%}checked="checked"{%endifequal%} value="archive/%(id)s.html" name="permalink_format"> 默认</label></th>
+		<td><code>{{domain}}/archive/123.html</code></td>
+	</tr>
+	<tr>
+		<th><label><input type="radio" {%ifequal permalink_format "%(year)s/%(month)s/%(day)s/%(postname)s"%}checked="checked"{%endifequal%} value="%(year)s/%(month)s/%(day)s/%(postname)s" name="permalink_format"> 日期和文章名</label></th>
+		<td><code>{{domain}}/2010/10/19/sample-post/</code></td>
+	</tr>
+	<tr>
+		<th><label><input type="radio" {%ifequal permalink_format "%(year)s/%(month)s/%(postname)s"%}checked="checked"{%endifequal%} value="%(year)s/%(month)s/%(postname)s" name="permalink_format"> 月份和文章名</label></th>
+		<td><code>{{domain}}/2010/10/sample-post/</code></td>
+	</tr>
+	<tr>
+		<th><label><input type="radio" {%ifequal permalink_format "archive/%(id)s"%}checked="checked"{%endifequal%} value="archive/%(id)s" name="permalink_format"> 数字</label></th>
+		<td><code>{{domain}}/archives/123</code></td>
+	</tr>
+	<tr>
+		<th>
+			<label><input type="radio" {%ifequal permalink_format "custom"%}checked="checked"{%endifequal%} value="custom" id="custom_selection" name="permalink_format">
+			自定义结构
+			</label>
+		</th>
+		<td>
+		<input type="text" class="regular-text code" value="{{permalink_structure}}" id="permalink_structure" name="permalink_structure">
+		<p>可用的参数: 4为的年 %(year)s ,两位的月 %(month)s , 两位的天 %(day)s, 文章的slug %(postname)s ,文章的ID%(id)s</p>
+		</td>
+	</tr>
+</tbody></table>
+	<p class="submit">
+			<input type="submit" value="保存更改" class="button-primary" name="Submit">
+		</p>
+	</form>
+</div>
+{%endblock%}

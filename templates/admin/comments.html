@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block content %}
+<script type="text/javascript" src="/static/admin/reply.js"></script>
+<div class="wrap">
+ 	<h2>编辑评论</h2>
+ 	<form id="posts-filter" action="/admin/comment/bulk-delete" method="post">
+ 		<ul class="subsubsub">
+ 			<li>
+ 				<a href="/admin/comments">
+ 				所有评论<span class="count">({{comment_count}})</span>
+ 				</a>
+ 			</li>
+ 			<li>
+ 				<a href="/admin/spam-comments">
+ 				垃圾评论<span class="count">({{spam_count}})</span>
+ 				</a>
+ 			</li>
+ 		</ul>
+ 		<div class="tablenav">
+ 			<div class="alignleft actions">
+			<input type="submit" class="button-secondary action" id="doaction" name="delete" value="批量删除">
+ 			</div>
+ 		</div>
+ 		<div class="clear"></div>
+ 		<table class="widefat">
+			<thead>
+				<th scope="col" class="check-column">
+					<input type="checkbox" onclick="$('input[name=checks]').attr('checked',this.checked);">
+				</th>
+				<th>作者</th>
+				<th>评论</th>
+				<th>文章</th>
+				</thead>
+			
+			<tfoot>
+				<th scope="col" class="check-column">
+					<input type="checkbox" onclick="$('input[name=checks]').attr('checked',this.checked);">
+				</th>
+				<th>作者</th>
+				<th>评论</th>
+				<th>文章</th>
+			</tfoot>
+			<tbody>
+         {%if comments%}
+	         {%for comment in comments%}
+			 <tr valign="middle" id="comment-{{comment.id}}">
+				<th scope="row" class="check-column">
+					<input type="checkbox" name="checks" value="{{comment.id}}">
+				</th>
+				<td class="column-author"> 
+	             	<strong>
+	             		<img width="40" height="40" class="avatar" alt="" src="/static/images/mystery.png" style="float:left;margin-top:3px;margin-right:10px;"/>
+	             		{% if comment.url %}
+	             		<a href="{{comment.url}}" target="_blank">{{comment.author}}</a>
+	             		{% else %}
+	             		{{ comment.author }}
+	             		{% endif %}
+	             	</strong>
+	             	<br/>
+	             	<a href="mailto:{{comment.email}}">{{comment.email}}</a>
+	             	<br/>
+	             	{{ comment.ip|default('', true) }} 	
+	             </td>
+	             <td class="comment">
+	             	<div id="submited-on">
+	             		提交于 {{comment.created.strftime("%B %dth, %Y at %I:%M%p")}}
+	             	</div>
+	             <p>{{comment.content|striptags}}</p>
+	             
+	             <div class="row-actions">
+	             	{% if comment.status == 'approved' %}
+	             	<span class="spam"><a title="标记这个评论为垃圾评论" href="/admin/comment/mark/{{comment.id}}?status=spam">垃圾评论</a></span>
+	             	{% else %}
+	             	<span class="approve"><a title="获准这条评论" href="/admin/comment/mark/{{comment.id}}?status=approved">获准</a></span>
+	             	{% endif %}
+	             	<span class="delete">| <a href="/admin/comment/delete/{{comment.id}}">删除</a></span>
+	             	<span class="edit">|<a href="/admin/comment/edit/{{comment.id}}"> 编辑评论</a></span>
+	             	<span class="reply">| <a href="{{comment.get_absolute_url()}}">回复</a></span>
+	             </div>
+	             
+	             </td>
+	             <td class="column-response"><a href="{{comment.post.get_absolute_url()}}">{{comment.post.title|e}}</a></td>
+			</tr>
+			{% endfor %}
+		{% else %}
+		 <tr valign="middle">
+		 	<td colspan="4" align="center" style="font-size: 15px;">暂时还没有评论信息</td>
+		 </tr>	
+		{% endif %}
+			</tbody>
+		</table>
+ 	</form>
+	
+	<div class="pagenavi">
+	<span class="pages">
+		Page {{ page }} of {{ page_count }}
+	</span>
+	{% for num in range(1, page_count+1) %}
+		{% if num == page %}
+			<span class="current">{{ page }}</span>
+		{% else %}
+			<a href="?page={{num}}">{{ num }}</a>
+		{% endif %}
+	{% endfor %}
+	</div>
+	
+</div>
+{% endblock %}

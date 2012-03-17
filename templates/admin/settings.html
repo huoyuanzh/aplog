@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="wrap">
+	<h2>常规选项</h2>
+	{% if msg %}
+	<div align="center" style="background-color: rgb(255, 251, 204);">
+		<p><strong>{{ msg }}</strong></p>
+	</div>
+	{% endif %}
+	<form id="settings" action="" method="post">
+		<table class="form-table">
+			<tbody>
+				<tr valign="top">
+					<th scope="row">
+						<label for="blogname">博客标题</label>
+					</th>
+					<td>{{ form.title.render()}}</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<label for="subtitle">博客子标题</label>
+					</th>
+					<td>{{form.subtitle.render()}}</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<label for="blognotice">博客公告</label>
+					</th>
+					<td>{{form.notice.render()}}</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<label for="sitekeywords">博客关键字</label>
+					</th>
+					<td>{{form.keywords.render()}}
+					<p class="setting-description">博客关键字对应head中的meta keywords</p>
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<label for="sitedesc">博客描述</label>
+					</th>
+					<td>{{form.description.render()}}
+					<p class="setting-description">用简洁的文字描述该博客,对应head中的meta description</p>
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<label for="email">管理员邮箱</label>
+					</th>
+					<td>
+						{% if form.email.note %}<p><span style="color: red">{{ form.email.note }}</span></p>{% endif %}  <!-- error message -->
+						{{form.email.render()}}
+						<p class="setting-description">管理员的邮箱</p>
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<label for="domain">域名</label>
+					</th>
+					<td>{{form.domain.render()}}</td>
+				</tr>
+			</tbody>
+		</table>
+		<br />
+		<p class="submit">
+			{{ form.submit.render() }}
+		</p>
+	</form>
+</div>
+{%endblock%}

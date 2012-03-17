@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="wrap">
+	<h2>评论选项</h2>
+	{% if msg %}
+	<div align="center" style="background-color: rgb(255, 251, 204);">
+		<p>
+		<strong>{{ msg }}</strong> 
+		</p>
+	</div>
+	{% endif %}
+	<form id="settings" action="" method="post">
+		<table class="form-table">
+			<tbody>
+				<tr valign="top">
+					<th scope="row">
+						<label for="comments_per_page">每页评论数</label>
+					</th>
+					<td><input type="text" class="regular-text" value="{{comments_per_page}}" id="comments_per_page" name="comments_per_page">
+					(Not implemented yet!!!)</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<label for="comments_per_page">给我发送电子邮件</label>
+					</th>
+					<td>
+					<input type="checkbox" {% if comments_notify %}checked="checked"{% endif %} value="1" id="comments_notify" name="comments_notify">
+						有人发表评论时 (Not implemented yet!!!)	
+					</td>
+				</tr>
+				<tr>
+					<th>
+						<label>启用Akismet</label>
+					</th>
+					<td>
+					<input type="checkbox" {%if akismet_enable == "yes" %}checked="checked"{%endif%} class="regular-text code" id="akismet_enable" name="akismet_enable", value="yes"/>
+					<input type="text" id="akismet_key" name="akismet_key" value="{{akismet_key|default('', true)}}"/>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<h3>头像</h3>
+		<p>头像功能是一个在各个博客间一直跟随您的图像，在每个启用头像的站点上,
+			它显示在您的名字旁边。在这里您可以启用您博客上的读者评论头像显示功能。</p>
+		<table class="form-table">
+			<tbody>
+			<tr valign="top">
+			<th scope="row">默认头像</th>
+			<td class="defaultavatarpicker">
+			<fieldset><legend class="hidden">默认头像</legend>
+			对于那些没有自定义头像的用户，您可以显示一个通用头像或者根据他们的邮件地址产生一个头像。<br>
+				<label><input type="radio" {% if avatar == "default" %}checked="checked"{% endif %} value="default" id="avatar_default" name="avatar"> 
+				<img width="32" height="32" class="avatar avatar-32 photo" src="/static/images/default.png" alt=""> Gravatar标志</label><br>
+				<label><input type="radio" {% if avatar == "identicon"%}checked="checked"{% endif %} value="identicon" id="avatar_identicon" name="avatar"> 
+				<img width="32" height="32" class="avatar avatar-32 photo" src="/static/images/identicon.png" alt=""> 抽象图形</label><br>
+				<label><input type="radio" {%if avatar == "wavatar"%}checked="checked"{% endif %} value="wavatar" id="avatar_wavatar" name="avatar"> 
+				<img width="32" height="32" class="avatar avatar-32 photo" src="/static/images/wavatar.png" alt=""> Wavatar</label><br>
+				<label><input type="radio" {%if avatar == "monster"%}checked="checked"{% endif %} value="monster" id="avatar_monster" name="avatar"> 
+				<img width="32" height="32" class="avatar avatar-32 photo" src="/static/images/monster.png" alt=""> 小怪物</label><br>
+			</fieldset>
+			</td>
+			</tr>
+			</tbody>
+		</table>
+		<p class="submit">
+			<input type="submit" value="Save Changes" class="button-primary" name="Submit">
+		</p>
+	</form>
+</div>
+{%endblock%}

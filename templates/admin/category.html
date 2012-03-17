@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="wrap">
+	<h2>分类目录</h2>
+	<div id="col-container">
+		<div id="col-left">
+			<div class="col-wrap">
+				<div class="form-wrap">
+				<h3>修改分类目录</h3>
+				<div id="ajax-response"></div>
+				<form name="addcat"  method="post" action="">
+				<input type="hidden" name="type" value="edit">
+				<input type="hidden" name="id" value="{{ cate.id }}">
+				<div class="form-field form-required">
+					<label for="name">分类目录名</label>
+					<input name="name" id="name" value="{{ cate.name }}" size="40" type="text">
+				    <p>此名称在很多地方用来区分分类目录，比如在文章底部或在分类目录小工具里。</p>
+				</div>
+				
+				<div class="form-field">
+					<label for="slug">分类目录别名</label>
+					<input name="slug" id="slug" value="{{ cate.slug }}" size="40" type="text">
+				    <p>“别名” 是URL友好的另外一个名称。它通常为小写并且只能包含字母，数字和连字符。</p>
+				</div>
+				
+				<div class="form-field">
+				    <label for="desc">描述</label>
+				    <textarea cols="40" rows="5" id="desc" name="desc">{{ cate.description }}</textarea>
+				    <p>描述不一定会被显示，有的主题会显示它。</p>
+				</div>
+				<p class="submit"><input class="button" name="submit" value="修改分类目录" type="submit"></p>
+				</form></div>
+				
+			</div>
+		</div>
+		<div id="col-right">
+			
+		<div class="col-wrap">
+		<form id="posts-filter" action="/admin/category/delete" method="post">
+		<div class="tablenav">
+		
+		<div class="alignleft actions">
+			<select name="action">
+			<option value="" selected="selected">批量动作</option>
+			<option value="delete">删除</option>
+			</select>
+			<input value="应用" name="doaction" id="doaction" class="button-secondary action" type="submit">
+		</div>
+		
+		<br class="clear">
+		</div>
+		
+		<div class="clear"></div>
+		
+		<table class="widefat tag fixed" cellspacing="0">
+			<thead>
+			<tr>
+			<th scope="col" id="cb" class="manage-column column-cb check-column" style=""><input type="checkbox"  onclick="$('input[name=checks]').attr('checked',this.checked);"></th>
+			<th scope="col" class="manage-column column-name" style="">名称</th>
+			<th scope="col" class="manage-column column-slug" style="">别名</th>
+			<th scope="col" class="manage-column column-posts num" style="">描述</th>
+			</tr>
+			</thead>
+		
+			<tfoot>
+			<tr>
+			<th scope="col" class="manage-column column-cb check-column" style=""><input type="checkbox"  onclick="$('input[name=checks]').attr('checked',this.checked);"></th>
+			<th scope="col" class="manage-column column-name" style="">名称</th>
+			<th scope="col" class="manage-column column-slug" style="">别名</th>
+			<th scope="col" class="manage-column column-posts num" style="">描述</th>
+			</tr>
+			</tfoot>
+
+			<tbody id="the-list" class="list:tag">
+				{% for category in categories %}
+				<tr id="tag-{{category.id}}" class="iedit alternate">
+				<th scope="row" class="check-column"> 
+				<input name="checks" value="{{category.id}}" type="checkbox"></th>
+					<td class="name column-name">
+						<strong>
+							<a class="row-title" href="/admin/category/edit/{{ category.id }}" title="编辑 &quot;{{category.name}}&quot;">{{category.name}}</a>
+						</strong>
+					</td>
+					<td class="slug column-slug">{{category.slug|default('')}}</td>
+					<td class="posts column-posts num">{{category.desc|default('')}}</td>
+				</tr>
+				{% else %}
+				<tr class="iedit alternate">
+				<td colspan="4" align="center" style="font-size: 16px;">现在还没有分类目录,赶紧添加一个</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+		<div class="tablenav">
+			{% if categories %}
+			{# {%end_pagination%}   #}  <!-- 这里是原来的分页代码 -->
+			{% endif %}
+		</div>
+
+		<br class="clear">
+		</form>
+		</div>
+			
+		</div>
+	</div>
+</div>
+{%endblock%}

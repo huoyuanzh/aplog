@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Aplog</title>
+<link rel="shortcut icon" href="/static/favicon.ico" />
+<link rel="stylesheet" href="/static/admin/subMenu.css" type="text/css" media="screen"/>
+<link rel="stylesheet" href="/static/admin/admin.css" type="text/css" media="screen"/>
+<!--
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js "></script>
+-->
+<script type="text/javascript" src="/static/js/jquery-1.2.6.js"></script>
+<script type="text/javascript" src="/static/js/jquery.cookie.js"></script>
+<script type="text/javascript" src="/static/js/jquery.subMenu.js"></script>
+<script type="text/javascript">
+var Mysubmenu=null;
+$(function(){
+	Mysubmenu=$("#logpress_menu").submenu({
+		oneSmOnly:false,
+		speed:300,
+		expandNum:1,
+		savestatus:false
+	}).expandAll();
+})
+</script>
+</head>
+
+<body class="lp_admin">
+	<div id="lp_wrap">
+		<div id="lpcontent">
+			<div id="lpheader">
+					<h1>
+						<a href="/" title="查看站点" target="_blank">Aplog <span>← 查看站点</span></a>
+					</h1>
+					<div id="header-info">
+						<div id="user-info">
+							<p>
+								<a title="Edit your profile" href="/admin/profile">{{ username }}</a> |
+								<a title="退出" href="/admin/logout">退出</a>
+							</p>
+						</div>
+					</div>
+			</div>
+			<div id="lpbody">
+				{% include "menu.html" %}
+				<div id="lpbody-content" style="overflow: hidden;">
+					<div id="screen-meta"></div>
+					{% block content %}{% endblock %}
+					
+					<div class="clear"></div>
+				</div>
+				<div class="clear"></div>
+			</div>
+			<div class="clear"></div>
+		</div>
+	</div>
+	<div id="footer">
+		<p id="footer-left" class="alignleft">
+			<span id="footer-thankyou">
+				<a href="http://127.0.0.1:8000/">Aplog</a> | Copyright 2012
+			</span>
+		</p>
+		<p id="footer-upgrade" class="alignright"></p>
+		<div class="clear"></div>
+	</div>
+</body>
+</html>

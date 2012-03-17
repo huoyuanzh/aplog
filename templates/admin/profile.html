@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block content %}
+<div id="profile-page" class="wrap">
+	<h2>配置</h2>
+	{% if msg %}
+	<div align="center" style="background-color: rgb(255, 251, 204);">
+		<p><strong>{{ msg }}</strong></p>
+	</div>
+	{% endif %}
+	<form id="your-profile" method="post" action="">
+		<input type="hidden" value="{{ user.id }}" name="uid" id="uid">
+		<h3>Name</h3>
+		<table class="form-table">
+			<tbody>
+			<tr>
+				<th><label for="user_login">Username</label></th>
+				<td><input type="text" class="regular-text" disabled="disabled" value="{{user.name}}" id="username" name="username"> Username can not be changed</td>
+			</tr>
+			<tr>
+				<th><label for="nickname">Nickname</label></th>
+				<td><input type="text" class="regular-text" value="{{user.nickname}}" id="nickname" name="nickname"></td>
+			</tr>
+			</tbody>
+		</table>
+		<h3>Contact</h3>
+		<table class="form-table">
+			<tbody>
+			<tr>
+				<th><label for="email">email</label></th>
+				<td><input type="text" class="regular-text" value="{{user.email}}" id="email" name="email">Needed.</td>
+			</tr>
+			
+			<tr>
+				<th><label for="url">website</label></th>
+				<td><input type="text" class="regular-text" value="{{user.url|default('', true)}}" id="url" name="url"></td>
+			</tr>
+		
+			</tbody>
+		</table>
+		<br />
+		<h3>About Yourself</h3>
+		<table class="form-table">
+			<tbody>
+			<tr>
+				<th><label for="description">Personal description</label></th>
+				<td><textarea cols="30" rows="5" id="description" name="description"></textarea><br>Share something about yourself, might be published.</td>
+			</tr>
+			
+			<tr>
+				<th><label for="pass1">New password</label></th>
+				<td><input type="password" autocomplete="off" value="" size="16" id="pw1" name="pw1"> If you want to modify password, input here, or you should let it empty.<br>
+					<input type="password" autocomplete="off" value="" size="16" id="pw2" name="pw2"> Confirm password.<br>
+						<div id="pass-strength-result">Strength</div>
+					<p>tips: Your password might use upper and lowwer case of alpha and numbers. </p>
+				</td>
+			</tr>
+			</tbody>
+		</table>
+		<p class="submit">
+			<input type="hidden" value="{{user.id}}" id="user_id" name="user_id">
+			<input type="submit" name="submit" value="Save Changes" class="button-primary">
+		</p>
+	</form>
+	
+</div>
+{%endblock%}

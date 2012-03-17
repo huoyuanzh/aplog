@@ -1,0 +1,43 @@
+<html lang="zh-CN" xmlns="http://www.w3.org/1999/xhtml" dir="ltr"><head>
+
+
+	<title> Aplog › 登录</title>
+	<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+	<link media="all" type="text/css" href="/static/admin/login.css" rel="stylesheet">
+
+	</head><body class="login">
+
+<div id="login">
+{% if message %}
+	<p class="message">
+   {{ message }}
+	<br>
+	</p>
+{% endif %}
+<form method="post" action="" id="loginform" name="loginform">
+	<p>
+		<label>用户名<br>
+		<input type="text" tabindex="10" size="20" value="" class="input" id="user_login" name="name"></label>
+	</p>
+	<p>
+		<label>密码<br>
+		<input type="password" tabindex="20" size="20" value="" class="input" id="user_pass" name="password"></label>
+	</p>
+	
+	<p class="submit">
+		<input type="submit" tabindex="100" value="登录" id="wp-submit" name="wp-submit">
+	</p>
+	<p>&nbsp;</p>
+
+<p id="nav">
+<a title="找回密码" href="#">忘记密码？</a>
+</p>
+
+</form></div>
+
+<p id="backtoblog"><a title="不知道自己在哪？" href="/">← 返回 Aplog </a></p>
+
+<script type="text/javascript">
+try{document.getElementById('user_login').focus();}catch(e){}
+</script>
+</body></html>

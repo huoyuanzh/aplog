@@ -1,0 +1,67 @@
+﻿<div id="sidebar">
+	<!-- search form -->
+	<form id="searchform" method="get" action="/search">
+		<div>
+			<input type="text" name="s" id="s" size="15" /><br />
+			<input type="submit" value="Search" />
+		</div>
+	</form>
+	<!-- END searchform -->
+				
+	<!--  blog pages -->
+	<h3>Pages</h3>
+		<ul>
+		<li class="page_item page-item-0"><a href="/" title="home">Home</a></li>
+		<li class="page_item page-item-0"><a href="/feed" title="feed">Feed</a></li>
+		{% for page in widget.pages %}
+		<li class="page_item page-item-0"><a href="{{ page.get_absolute_url() }}" title="{{ page.title }}">{{ page.title }}</a></li>
+		{% endfor %}
+		</ul>
+	
+	<!-- archives by date -->
+	<h3>Archives</h3>
+		<ul>
+		{% for archive in widget.archives %}
+			<li><a href="/archives/{{archive.date.year}}/{{archive.date.month}}" title="{{archive.date.month}} {{archive.date.year}}">
+					{{ archive.date.strftime("%B")}} {{ archive.date.year }}</a>&nbsp; ({{ archive.count}})</li>
+		{% endfor %}
+		</ul>
+		
+	<h3>Recent Comments</h3>			
+		<ul id="recentcomments">
+		{% for comment in widget.recentcomments %}
+			<li class="recentcomments">
+			{% if comment.url %}<a href='http://{{comment.url}}' rel='external nofollow'>{{ comment.author|e }}</a>
+			{% else %}{{ comment.author|e }}
+			{% endif %}
+			on <a href="{{comment.get_absolute_url()}}">{{comment.post.title|e}}</a>
+			</li>
+		{% endfor %}
+		
+	<!-- category here -->
+	<h3>Categories</h3>
+		<ul>
+			{% for cate in widget.categories %}
+			<li class="cat-item cat-item-{{ cate.id }}">
+				<a href="{{ cate.get_absolute_url() }}" title="View all posts filed under {{ cate.get_absolute_url() }}">{{ cate.name }}</a>
+			</li>
+		{% endfor %}
+		</ul>
+		
+	<!-- tag here -->
+	<h3>Tags</h3>
+		<div>
+		{% for tag in widget.tags %}
+			<a href='{{ tag.get_absolute_url() }}' class='tag-link-{{ tag.id }}' title='1 topic' rel="tag" style='font-size: 8pt;'>{{ tag.name }}</a>
+		{% endfor %}
+		</div>
+	
+		
+	<!-- blogroll -->
+	<h3>Blogroll</h3>
+		<ul>
+			{% for link in widget.links %}
+			<li><a href="{{ link.url }}" title="{{ link.description }}">{{ link.name }} </a></li>
+			{% endfor %}
+		</ul>
+</div>
