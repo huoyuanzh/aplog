@@ -18,5 +18,4 @@ Features:
 - Integrated tinymce editor
 ...
 
-
 Run models.py to setup database first.
