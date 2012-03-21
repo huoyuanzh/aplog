@@ -7,12 +7,12 @@ from datetime import datetime
 
 from sqlalchemy import create_engine, Table, ForeignKey
 from sqlalchemy import Column, Integer, String, Text, DateTime
-from sqlalchemy import and_, or_
+from sqlalchemy import and_
 from sqlalchemy.orm import sessionmaker, relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 
 
-#engine = create_engine('mysql://root:123456@localhost/aplog2?charset=utf8', echo=True)
+#engine = create_engine('mysql://root:123456@localhost/aplog?charset=utf8', echo=True)
 engine = create_engine('sqlite:///mydatabase.db', echo=True)
 Base = declarative_base()              # every Mapping class should inherit from this
 
@@ -45,10 +45,11 @@ class Post(Base):
     link = Column(String(255), unique=True)
 
     # many to one: Post <-> User
-    author = relationship('User', backref=backref('posts', order_by=created))
+    author = relationship('User', backref=backref('posts', lazy='dynamic'))
     
     # many to many: Post <-> Term
-    terms = relationship('Term', secondary=term_relationships, backref=backref('posts', order_by=created))
+    terms = relationship('Term', secondary=term_relationships,
+                         backref=backref('posts', lazy='dynamic'))
 
 
     def __repr__(self):
@@ -58,10 +59,10 @@ class Post(Base):
     def get_absolute_url(self):
         if self.slug:
             if self.content_type == 'post': return "/archive/%s" % self.slug
-            else: return "/page/%s" % self.slug
+            else: return "/%s" % self.slug
         else:
             if self.content_type == 'post': return "/archive/%d" % self.id
-            else: return "/page/%d" % self.id
+            else: return "/%d" % self.id
             
     def shortcontent(self, length=300):
         return self.content[:length]
@@ -128,13 +129,15 @@ class Comment(Base):
     created = Column(DateTime, default=datetime.now)
     content = Column(Text)
     status = Column(String(10), default='approved')         # 'approved' or 'spam' or 'waiting'
-    #parent_id = Column(Integer, ForeignKey('comments.id'))
+    parent_id = Column(Integer, ForeignKey('comments.id'))
 
     # many-to-one: Comment <-> Post
     post = relationship('Post', backref=backref('comments', order_by=created))
 
     # many-to-one: Comment <-> Comment
-   # parent = relationship('Comment', backref=backref('children', order_by=created))
+    parent = relationship('Comment',
+                          backref=backref('children', remote_side=[id],
+                                          order_by=created))
 
     def __repr__(self):
         return "<Comment ('%s')>" % str(self.id)
@@ -172,13 +175,13 @@ class Link(Base):
         return "<Link ('%s')>" % str(self.id)
 
 # use to init blog data
-def init_data():
+def init_db():
     Session = sessionmaker(bind=engine)
     session = Session()
     cate = Term(name='Uncategory', slug='uncategory', type='category')
     session.add(cate)
     pw = hashlib.md5(u'123456').hexdigest()
-    user = User(name='admin', password=pw, email='admin@example.com')
+    user = User(name='appy', password=pw, email='admin@example.com')
     session.add(cate)
     post = Post(title='Hello', content='Hello, world!', author=user)
     post.terms.append(cate)
@@ -189,6 +192,6 @@ def init_data():
 if __name__ == '__main__':
     # create all the tables
     Base.metadata.create_all(engine)
-    init_data()
+    init_db()
     
     

@@ -15,8 +15,9 @@ urls = (
     '/archives/(\d{4})/(\d{1,2})', 'archives',
     '/search', 'search',
     '/archive/([-\w]+)', 'singlepost',
-    '/page/([-\w]+)', 'singlepost',
     '/feed', 'feed',
+    '/sitemap.xml', 'sitemap',
+    '/([-\w]+)', 'singlepost',          # page
 )
 
 app = web.application(urls, globals(), autoreload=True)

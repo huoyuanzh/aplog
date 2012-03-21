@@ -13,7 +13,7 @@ from models import Post, Term, Link, Comment
 # get pages
 def pages():
     pages = web.ctx.orm.query(Post).filter(Post.content_type=='page').\
-            filter(Post.status=='publish').order_by('posts.menu_order DESC')
+           filter(Post.status=='publish').order_by('posts.menu_order DESC')
     return pages
 
 
@@ -51,3 +51,19 @@ def archives():
         d['count'] = count
         ret.append(d)
     return ret
+
+
+# get relative posts
+def relative_posts(post):
+    """get relative posts
+    saying the posts with the same tag
+    """
+    tags = []
+    for term in post.terms:
+        if term.type == 'tag':
+            tags.append(term.id)
+    posts = web.ctx.orm.query(Post).\
+            filter(Post.terms.any(Term.id.in_(tags)))
+    if posts:
+        posts = posts.filter(Post.id != post.id).all()[:7]
+    return posts

@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9  http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>{{ domain }}</loc>
+    <lastmod>2012-03-16T18:01:18+08:00</lastmod>
+    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+
+  <url>
+    <loc>{{ domain }}/feed</loc>
+    <lastmod>2012-03-16T18:01:18+08:00</lastmod>
+    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+
+  {% for page in pages %}
+  <url>
+    <loc>{{ domain }}{{ page.get_absolute_url() }}</loc>
+    <lastmod>{{ page.modified.strftime("%Y-%m-%dT%H:%M:%S+08:00") }}</lastmod>
+    <priority>0.5</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  {% endfor %}
+
+  {% for post in posts %}
+  <url>
+    <loc>{{ domain }}{{ post.get_absolute_url() }}</loc>
+    <lastmod>{{ post.modified.strftime("%Y-%m-%dT%H:%M:%S+08:00") }}</lastmod>
+    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  {% endfor %}
+
+  {% for term in terms %}
+  <url>
+    <loc>{{ domain }}{{ term.get_absolute_url() }}</loc>
+    <lastmod>2012-03-19T18:01:18+08:00</lastmod>
+    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  {% endfor %}
+
+  {% for archive in archives %}
+  <url>
+    <loc>{{ domain }}/archives/{{archive.date.year}}/{{archive.date.month}}</loc>
+    <lastmod>2012-03-19T18:01:18+08:00</lastmod>
+    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  {% endfor %}
+
+</urlset>
