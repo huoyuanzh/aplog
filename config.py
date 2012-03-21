@@ -3,7 +3,7 @@
 
 
 __all__ = [
-    "POST_PER_PAGE", "ADMIN_POST_PER_PAGE", "ADMIN_POST_PER_PAGE",
+    "POST_PER_PAGE", "ADMIN_POST_PER_PAGE", "ADMIN_COMMENT_PER_PAGE",
     "render", "admin_render",
     "render_template",
     ]
