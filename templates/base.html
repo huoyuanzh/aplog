@@ -1,46 +1,101 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-					  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US">
+
 <head>
-	<title>{% block title %}{% endblock %}</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<meta name="description" content="a personal blog" />
-	<link href="/static/css/style.css" rel="stylesheet" type="text/css" media="screen" />
-	<link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico" />	
-	<style type="text/css">.recentcomments a{display:inline !important;padding: 0 !important;margin: 0 !important;}</style>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title> {% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="/static/pygments.css" type="text/css" media="screen" />
+
     <!-- SyntaxHighligher -->
 	<script type="text/javascript" src="/static/syntax_highlight/js/shCore.js"></script>
 	<script type="text/javascript" src="/static/syntax_highlight/js/shBrushPython.js"></script>
 	<script type="text/javascript" src="/static/syntax_highlight/js/shBrushJScript.js"></script>
 	<script type="text/javascript" src="/static/syntax_highlight/js/shBrushPlain.js"></script>
     <script type="text/javascript" src="/static/syntax_highlight/js/shbrushcpp.js"></script>
-    <!-- include other brush youself here -->
 	<link href="/static/syntax_highlight/css/shCore.css" rel="stylesheet" type="text/css" />
-	<link href="/static/syntax_highlight/css/shThemeDefault.css" rel="stylesheet" type="text/css">
+	<link href="/static/syntax_highlight/css/shThemeDefault.css" rel="stylesheet" type="text/css" />
 	<script type="text/javascript">
 		SyntaxHighlighter.all()
-	</script><!-- END SyntaxHighlighter -->
-		
+	</script> <!-- END SyntaxHighlighter -->
+    
+  <!--[if IE]>
+    <link href="/static/ie.css" type="text/css" rel="stylesheet" media="screen" />
+  <![endif]-->
+  
+  <!--[if lte IE 6]>
+    <link href="/static/ie6.css" type="text/css" rel="stylesheet" media="screen" />
+  <![endif]-->
+    <link href="http://fonts.googleapis.com/css?family=Vollkorn&subset=latin" rel="stylesheet" type="text/css" />
+    <link rel="alternate" type="application/rss+xml" title="Aplog &raquo; Feed" href="http://example.com/feed" />
+	<link rel='index' title='aplog' href='http://example.com' />
+    <style type="text/css">
+        span.header_image { background: url(images/default_header.jpg) no-repeat;
+                  width: 160px;
+                  height: 120px;
+                  display: block;
+                  margin-bottom: 30px;
+                 }
+        #main_nav h1.masthead a { color:#000000; }
+    </style>
+	<style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+    <style type="text/css">
+    #searchcontrol {
+        OVERFLOW: hidden;
+        height: 40px;
+        position: absolute;
+        top: 1px;
+        z-index: 2;
+        font family: Arial, Verdana;
+        font size: 0.8em;
+        padding: 0.5em;
+    }
+    </style>
+
 </head>
 
-
 <body>
-	<div id="container" class="group">
-		<h1><a href="/">Aplog</a></h1>
-		<div id="content">
-			{% block content %}{% endblock %}
+<div id="wrapper">
+	<div id="search">
+    <form method="get" id="searchform" action="/search">
+		<div><input type="text" class="search" size="15" name="s" id="s" value="search" onFocus="if (this.value == 'search') {this.value = '';}" onBlur="if (this.value == '') {this.value = 'search';}"/>
+			 <input type="submit" id="searchsubmit" value="Go" />
 		</div>
-		
-		<!-- sidebar here -->
-		{% include "sidebar.html" ignore missing %}
-		<!-- sidebar ends here -->
-		
+	</form>
 	</div>
-	
-	<!-- footer here -->
+
+	<div id="main_nav">
+		<span class="header_image"><!-- can put an image here --></span>
+		<h1 class="masthead"><a href="/">Aplog</a></h1>
+		<p class="description">It's all about my thoughts</p>
+		<ul class="menu">
+            {% if location == 'home' %}<li class="page_item current_page_item"><a href="/" title="home">Home</a></li>
+            {% else %}<li class="page_item"><a href="/" title="home">Home</a></li>
+            {% endif %}
+			{% for p in widget.pages %}
+                {% if location == 'single' and p.title == post.title %}
+                    <li class="page_item page-item-{{ p.id }} current_page_item"><a href="{{p.get_absolute_url()}}" title="{{ p.title }}">{{ p.title }}</a></li>
+                {% else %}
+                    <li class="page_item page-item-{{ p.id }}"><a href="{{p.get_absolute_url()}}" title="{{ p.title }}">{{ p.title }}</a></li>
+                {% endif %}
+			{% endfor %}
+			<li><a href="/feed">Feed</a></li>
+		</ul>
+	</div>
+
+	<div id="content">
+		{% block content %}{% endblock %}
+		
+		{% block sidebar %}{% endblock %}
+			
+	</div> <!-- close content -->
+
 	<div id="footer">
-	<p>&copy;2012  Template modified from <a href="http://lucianmarin.com/page/themes" rel="designer">Journalist</a> &mdash; Powered by <a href="http://webpy.org">web.py</a></p>
+        <p> &copy; Copyright 2012 by aplog  -powered by web.py</p>
 	</div>
-	
+
+
+</div> <!-- close wrapper -->
 </body>
 </html>

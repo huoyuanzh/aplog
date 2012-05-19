@@ -1,0 +1,55 @@
+﻿{% extends "base.html" %}
+{% block title %}Aplog{% endblock %}
+
+{% block content %}
+	<div id="entry_content">
+		{% for post in posts %}
+			<div class="post-{{post.id}} post type-post status-publish format-standard hentry">
+				<h2 class="title"><a href="{{post.get_absolute_url()}}" rel="bookmark" title="Permanent Link to {{post.title}}">{{post.title|title}}</a></h2>
+				<p class="date">{{post.created.strftime('%b %dth, %Y') }}&sect;
+				<a href="{{post.get_absolute_url()}}#comments" title="Comment on {{post.title}}"><span class="commentcount">{{post.comment_count}} comment</span></a>
+				&sect; <a href="{{post.get_absolute_url()}}" rel="bookmark" title="Permanent Link to Hello world!">permalink</a></p>
+      
+				<div class="entry">
+                    {% if post.excerpt %} <p>{{ post.excerpt }}</p>
+					{% elif post.content.find("<!-- pagebreak -->") != -1 %} {{ post.content|excerpt}} <!-- excerpt is self-defined filter -->
+					{% else %}{{ post.content|striptags|truncate(300) }}
+					{% endif %}
+					<a href="{{ post.get_absolute_url() }}">...Read more</a>
+				</div>
+			</div><!-- close post_class -->
+		{% else %}
+			<h2> Not found.</h2>
+		{% endfor %}
+		
+		<!-- navigation 
+		<div class="navigation">
+			<p class="alignleft">previous</p>
+			<p class="alignright">next</p>
+		</div> -->
+		
+		<!-- posts navigation -->
+		<div class="navigation">
+		<p>
+			{% if page > 1 %}
+				<a href="?page={{ page - 1 }}">&laquo; Previous</a>
+			{% else %}
+				&laquo; Previous
+			{% endif %}
+			<span>—— | ——</span>
+			{% if page < page_count %}
+				<a href="?page={{ page + 1 }}">Next &raquo;</a>
+			{% else %}
+				Next &raquo;
+			{% endif %}
+		</p>
+		</div>
+	</div>
+
+{% endblock %}
+
+{% block sidebar %}
+{% include "sidebar.html" %}
+{% endblock %}
+
+

@@ -1,33 +1,105 @@
-﻿<div id="sidebar">
-	<!-- search form -->
-	<form id="searchform" method="get" action="/search">
-		<div>
-			<input type="text" name="s" id="s" size="15" /><br />
-			<input type="submit" value="Search" />
-		</div>
-	</form>
-	<!-- END searchform -->
-				
-	<!--  blog pages -->
-	<h3>Pages</h3>
-		<ul>
-		<li class="page_item page-item-0"><a href="/" title="home">Home</a></li>
-		<li class="page_item page-item-0"><a href="/feed" title="feed">Feed</a></li>
-		{% for page in widget.pages %}
-		<li class="page_item page-item-0"><a href="{{ page.get_absolute_url() }}" title="{{ page.title }}">{{ page.title }}</a></li>
-		{% endfor %}
-		</ul>
-	
-	<!-- archives by date -->
-	<h3>Archives</h3>
-		<ul>
-		{% for archive in widget.archives %}
-			<li><a href="/archives/{{archive.date.year}}/{{archive.date.month}}" title="{{archive.date.month}} {{archive.date.year}}">
-					{{ archive.date.strftime("%B")}} {{ archive.date.year }}</a>&nbsp; ({{ archive.count}})</li>
-		{% endfor %}
-		</ul>
+﻿<div id="supplementary">
+<div class="meta">
+    <ul>
+		{% if location == 'home' %}
+			<li>
+			<h3>About</h3>
+			<p>This section is for you to put some information about you or the site here</p>
+			</li>
+			
+			<li>
+			<h3>Categories</h3>
+			<ul id="categories">
+				{% for cate in widget.categories %}
+					<li class="cat-item cat-item-{{ cate.id }}">
+						<a href="{{ cate.get_absolute_url() }}" title="View all posts filed under {{ cate.get_absolute_url() }}">{{ cate.name }}</a>
+					</li>
+				{% endfor %}
+			</ul>
+			</li>
 		
-	<h3>Recent Comments</h3>			
+			<li>
+			<h3>Tags</h3>
+			<div style="padding: 8px 0;">
+			{% for tag in widget.tags %}
+				<a href='{{ tag.get_absolute_url() }}' class='tag-link-{{ tag.id }}' title='1 topic' rel="tag" style='font-size: 8pt;'>{{ tag.name }}</a>
+			{% endfor %}
+			</div>
+			</li>
+    
+			<li>
+			<h3>Archives</h3>
+			<ul id="archives">
+				{% for archive in widget.archives %}
+					<li><a href="/archives/{{archive.date.year}}/{{archive.date.month}}" title="{{ archive.date.strftime('%b %Y')}}">
+						{{ archive.date.strftime("%B %Y")}}</a>&nbsp; ({{ archive.count}})</li>
+				{% endfor %}
+			</ul>
+			</li>
+		{% elif location == 'single' %}
+			<li>
+			<h3>What's this?</h3>
+			<p>You are currently reading <strong>{{ post.title|e }}</strong> at <a href="/">Aplog</a>.</p>
+			</li>
+			
+			<li>
+			<h3>Meta</h3>
+			<ul class="single_post_meta">
+				<li><strong>Author: </strong>admin</li>
+				<li><strong>Comments: </strong>{% if post.comment_count > 1 %}{{post.comment_count}} comments{% else %}{{post.comment_count}} comment{% endif %}</li>
+				<li><strong>Category: </strong>
+					{% for term in post.terms %}
+						{% if term.type == 'category' %}
+							<a href="{{ term.get_absolute_url() }}" title="View all posts in {{ term.name|e }}" rel="category">{{ term.name|e }}</a>
+						{% endif %}
+					{% endfor %}
+				</li>
+				<li><strong>Tags: </strong>
+					{% for term in post.terms %}
+						{% if term.type == 'tag' %}
+							<a href="{{ term.get_absolute_url() }}" title="View all posts in {{ term.name|e }}" rel="category">{{ term.name|e }}</a>
+						{% endif %}
+					{% endfor %}
+				</li>
+			</ul>
+			</li>
+			
+			<li>
+			<h3>Relative Posts</h3>
+			<ul>
+				{% for p in widget.relative_posts %}
+					<li><a href='{{p.get_absolute_url()}}' rel='bookmark'>{{p.title}}</a></li>
+				{% endfor %}
+			</ul>
+            </li>
+		{% elif location == 'archives' %}
+			<li>
+			<h3>Where am I?</h3>
+			<p>You are currently viewing the archives for <strong>{{ year }}/{{ month }}</strong> at <a href="/">Aplog</a>.</p>
+			<div class="spacer"></div><br/>
+			</li>
+		{% elif location == 'category' %}
+			<li>
+			<h3>Where am I?</h3>
+			<p>You are currently browsing the <strong>{{ name}}</strong> category at <a href="/">Aplog</a>.</p>
+			<div class="spacer"></div><br/>
+			</li>
+		{% elif location == 'tag' %}
+			<li>
+			<h3>Where am I?</h3>
+			<p>You are currently browsing the <strong>{{ name}}</strong> tag at <a href="/">Aplog</a>.</p>
+			<div class="spacer"></div><br/>
+			</li>
+		{% elif location == 'search' %}
+			<li>
+			<h3>Search results</h3>
+			<p>You are currently viewing the search results for <strong>{{query}}</strong></p>
+			</li>
+			
+		{% endif %}
+		
+		<li>
+		<h3>Recent Comments</h3>			
 		<ul id="recentcomments">
 		{% for comment in widget.recentcomments %}
 			<li class="recentcomments">
@@ -37,31 +109,18 @@
 			on <a href="{{comment.get_absolute_url()}}">{{comment.post.title|e}}</a>
 			</li>
 		{% endfor %}
-		
-	<!-- category here -->
-	<h3>Categories</h3>
-		<ul>
-			{% for cate in widget.categories %}
-			<li class="cat-item cat-item-{{ cate.id }}">
-				<a href="{{ cate.get_absolute_url() }}" title="View all posts filed under {{ cate.get_absolute_url() }}">{{ cate.name }}</a>
-			</li>
-		{% endfor %}
 		</ul>
+		</li>
 		
-	<!-- tag here -->
-	<h3>Tags</h3>
-		<div>
-		{% for tag in widget.tags %}
-			<a href='{{ tag.get_absolute_url() }}' class='tag-link-{{ tag.id }}' title='1 topic' rel="tag" style='font-size: 8pt;'>{{ tag.name }}</a>
-		{% endfor %}
-		</div>
-	
-		
-	<!-- blogroll -->
-	<h3>Blogroll</h3>
-		<ul>
+		<li>
+		<h3>Blogroll</h3>
+		<ul id="blogroll">
 			{% for link in widget.links %}
-			<li><a href="{{ link.url }}" title="{{ link.description }}">{{ link.name }} </a></li>
+				<li><a href="{{ link.url }}" title="{{ link.description }}">{{ link.name }} </a></li>
 			{% endfor %}
 		</ul>
-</div>
+		</li>
+	</ul>
+
+</div> <!-- close meta -->
+</div> <!-- close supplementary -->

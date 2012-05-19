@@ -3,17 +3,23 @@
 
 
 __all__ = [
-    "POST_PER_PAGE", "ADMIN_POST_PER_PAGE", "ADMIN_COMMENT_PER_PAGE",
+    "POST_PER_PAGE", "ADMIN_POST_PER_PAGE", "ADMIN_POST_PER_PAGE",
     "render", "admin_render",
     "render_template",
     ]
 
 
 import os
+import re
 import web
 import cgi
 from web.contrib.template import render_jinja
 from jinja2 import Environment, FileSystemLoader
+
+from pygments import highlight
+from pygments.lexers import guess_lexer, get_lexer_by_name
+from pygments.formatters import HtmlFormatter
+
 
 POST_PER_PAGE = 5
 ADMIN_POST_PER_PAGE = 7
@@ -53,8 +59,22 @@ def post_excerpt(post):
         return post[:end]
     else:
         return post
+
+# highlight code in post content
+def code_highlight(content):
+    codes = re.findall('<code>.*?</code>', content, re.U | re.S)
+    for c in codes:
+        code = c[6:-7]
+        try:
+            lexer = guess_lexer(code)
+        except:
+            lexer = get_lexer_by_name('python', stripall=True)
+        code = highlight(code, lexer, HtmlFormatter())
+        content = content.replace(c, code)
+    return content
     
 
+        
 # render template with specific template name
 def render_template(template_name, **context):
     extensions = context.pop('extensions', [])
@@ -66,6 +86,7 @@ def render_template(template_name, **context):
             )
     jinja_env.globals.update(globals)
     jinja_env.filters['excerpt'] = post_excerpt
+    #jinja_env.filters['highlight'] = code_highlight
     
     #jinja_env.update_template_context(context)
     return jinja_env.get_template(template_name).render(context)

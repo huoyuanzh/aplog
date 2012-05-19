@@ -1,0 +1,20 @@
+p.description, p.date, .entry a.more-link,
+#entry_content p.tags span, .comment-meta {
+	font-family: "Palatino Linotype";
+}
+
+#entry_content .sticky .entry {
+	padding-bottom: 1px;
+}
+
+.entry a.more-link {
+	margin-top: -.5em;
+}
+
+.commenttext {
+	margin-top: 1.5em;
+}
+
+.monthly {
+	padding-top: 1.5em;
+}

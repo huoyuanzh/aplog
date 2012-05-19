@@ -1,106 +1,35 @@
 {% extends "base.html" %}
-{% block title %}Aplog - {{ post.title|e }}{% endblock %}
+{% block title %}&raquo; {{ post.title|e }} | Aplog{% endblock %}
+
 {% block content %}
-	<div class="post hentry">
-		<h2 id="post-{{ post.id }}" class="entry-title"><a href="{{ post.get_absolute_url() }}" rel="bookmark">{{ post.title|title|e }}</a></h2>
-		<p class="comments"><a href="{{ post.get_absolute_url() }}#comments">{{ post.comment_count }} comments</a></p>
-		
-		<!-- post content -->
-		<div class="main entry-content group">
-			<p>{{ post.content|safe }}</p>
-		</div>
-		
-		{% if post.content_type == 'post' %}
-		<!-- meta data of the post -->
-		<div class="meta group">
-			<div class="signature">
-				<p class="author vcard">Written by <span class="fn">Admin</span> <span class="edit"></span></p>
-				<p><abbr class="updated" title="{{ post.created.strftime('%B %dth, %Y at %I:%M%p') }}">{{ post.created.strftime("%B %dth, %Y at %I:%M%p")	 }}</abbr></p>
-			</div>	
-			<div class="tags">
-				<p>Posted in
-					{% for cate in post.terms %}
-						{% if cate.type == "category" %}
-							<a href="{{ cate.get_absolute_url() }}" title="View all posts in {{ cate.name|e }}" rel="category">{{ cate.name|e }}</a>,
-						{% endif %}
-					{% endfor %}
-				</p>
+	<div id="entry_content">
+	
+			<h2 class="title"><a href="{{post.get_absolute_url()}}" rel="bookmark" title="Permanent Link to {{post.title}}">{{post.title|title}}</a></h2>
+			<p class="date">{{post.created.strftime('%b %dth, %Y') }}&sect;
+			{% if post.comment_status %}
+				<a href="{{post.get_absolute_url()}}#comments" title="Comment on {{post.title}}"><span class="commentcount">{{post.comment_count}} comment</span></a>&sect;
+			{% endif %}
+				<a href="{{post.get_absolute_url()}}" rel="bookmark" title="Permanent Link to Hello world!">permalink</a></p>
+      
+			<div class="entry">
+                {{ post.content|safe }}
 				
-				<p>Tagged with
-					{% for tag in post.terms %}
-						{% if tag.type == "tag" %}
-							<a href="{{ tag.get_absolute_url() }}" title="View all posts tagged with {{ tag.name|e }}" rel="tag">{{ tag.name|e }}</a>,
-						{% endif %}
-					{% endfor %}
-				</p>
-			</div>
-		</div>
-		<br />
-		{% endif %}
-	</div>
-	
-	<!-- next and previous one post navigation -->
-	{% if post.content_type == 'post' %}
-	<div class="navigation group">
-		{% if post.get_prev() %}
-			<div class="alignleft"><a href="{{ post.get_prev().get_absolute_url() }}">&laquo; {{ post.get_prev().title|e }}</a></div>
-		{% endif %}
-		{% if post.get_next() %}
-			<div class="alignright"><a href="{{ post.get_next().get_absolute_url() }}">&raquo; {{ post.get_next().title|e }}</a></div>
-		{% endif %}
-	</div>
-	{% endif %}
-	
-	{% if post.comment_status == 1 %}	
-	<!-- comments starts -->
-	<a name="comments" id="comments"></a>
-	<h3 class="reply">{{ post.comment_count }} Responses to '{{ post.title|e }}'</h3>
-	<a href="#respond">Add your comment</a>
+				<div class="pagination"></div>
+				<p class="tags"></p>
+				
+				{% if post.comment_status == 1 %}
+					{% include "comments.html" %}
+				{% endif %}
 
-	<ol class="commentlist">
-		
-		{% for comment in post.comments %}
-		{% if comment.status != "spam" %}
-		{% if comment.author == admin %}<li id="comment-{{ comment.id }}" class="byuser comment-author-admin bypostauthor">
-		{% else %}<li id="comment-{{ comment.id }}" class="">
-		{% endif %}
-			<div class="comment_mod">
 			</div>
 	
-			<div class="comment_text">
-				<p>{{ comment.content|safe }}</p>
-			</div>
-	
-			<div class="comment_author">
-				<img alt='' src='/static/images/mystery.png' class='avatar avatar-32' height='32' width='32' />
-				<p><strong><a href="{{ comment.get_absolute_url() }}" rel='external nofollow'>{{ comment.author }}</a></strong></p>
-				<p><small> {{ comment.created.strftime("%b %dth, %Y") }} </small></p>
-			</div>
-			<div class="clear"></div>
-		</li>
-		{% endif %}
-		{% endfor %}
-	</ol>
 
-	<a name="respond" id="respond"></a>
-	<h3 class="reply">Leave a Reply</h3>
-	
-	<!-- comment form -->
-	<form action="" method="post" id="commentform">
-		<div class="postinput">
-			<span style="color: red">{{ form.author.note|default('', true) }}</span>   <!-- error message -->
-			<p>{{ form.author.render() }}<label for="author"><small>Name (required)</small></label></p>
-			<span style="color: red">{{ form.email.note|default('', true) }}</span>
-			<p>{{ form.email.render() }}<label for="email"><small>Mail (will not be published) (required)</small></label></p>
-			<span style="color: red">{{ form.url.note|default('', true) }}</span>
-			<p>{{ form.url.render() }}<label for="url"><small>Website</small></label></p>
-			<span style="color: red">{{ form.comment.note|default('', true) }}</span>
-			<p>{{ form.comment.render() }}</p>
-			<p>{{ form.submit.render() }}</p>
-		</div>
-	</form>
-	{% endif %}
-	
+	</div>
+
+{% endblock %}
+
+{% block sidebar %}
+{% include "sidebar.html" %}
 {% endblock %}
 
 

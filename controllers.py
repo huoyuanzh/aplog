@@ -6,8 +6,7 @@ from sqlalchemy import and_, or_, extract
 from markdown import markdown
 
 from models import *
-from config import render, render_template                                   # render for jinja2
-from config import POST_PER_PAGE
+from config import *                                   # render for jinja2
 from forms import comment_form
 from akismet import Akismet, AkismetError, APIKeyError
 import sidebar
@@ -104,7 +103,7 @@ class singlepost:
                     comment.status = 'spam'
                     ak.submit_spam(comment.content.encode('utf-8'), data=data, build_data=True)
                     
-        except (AkismetError, APIKeyError):
+        except AkismetError, APIKeyError:
             pass
                 
         
@@ -191,7 +190,7 @@ class tag:
                    filter(Term.slug==arg).\
                    filter(Term.type=='tag').first()
         if not term: raise web.notfound()
-        posts = term.posts.filter(Post.status=='publish').\
+        posts = term.posts.filter(Post.status=='post').\
                 order_by('posts.created DESC')           # order by created datetime DESC
         return render_template('archive.html', archtype='tag',
                                name=term.name, posts=posts,
@@ -251,20 +250,4 @@ class feed:
         web.header('Content-Type', 'text/xml')
         domain = web.ctx.get('homedomain', 'http://example.com')
         return render_template('feed.xml', domain=domain, posts=posts)
-
-class sitemap:
-    def GET(self):
-        pages = web.ctx.orm.query(Post).filter(Post.content_type=='page').\
-                filter(Post.status=='publish').\
-                order_by("posts.created DESC")
-        posts = web.ctx.orm.query(Post).filter(Post.content_type=='post').\
-                filter(Post.status=='publish').\
-                order_by("posts.created DESC")
-        terms = web.ctx.orm.query(Term).all()
-        archives = sidebar.archives()
-        domain = web.ctx.get('homedomain', 'http://aplog.sinaapp.com')
-        web.header('Content-Type', 'text/xml')
-        return render_template('sitemap.xml', pages=pages,
-                               posts=posts, terms=terms,
-                               archives=archives, domain=domain)
         

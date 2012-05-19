@@ -2,39 +2,54 @@
 {% block title %}Aplog{% endblock %}
 
 {% block content %}
-	{% for post in posts %}
-		<div class="post hentry">
-			<h2 id="post-{{ post.id }}" class="entry-title"><a href="{{ post.get_absolute_url() }}" rel="bookmark">{{ post.title|title|e }}</a></h2>
-			<p class="comments"><a href="{{ post.get_absolute_url() }}#comments">{{ post.comment_count }} comments</a></p>
-		
-			<!-- post excerpt -->
-			<div class="main entry-content group">
-				<p>
-					{% if post.excerpt %} {{ post.excerpt }}
+	<div id="entry_content">
+		{% for post in posts %}
+			<div class="post-{{post.id}} post type-post status-publish format-standard hentry">
+				<h2 class="title"><a href="{{post.get_absolute_url()}}" rel="bookmark" title="Permanent Link to {{post.title}}">{{post.title|title}}</a></h2>
+				<p class="date">{{post.created.strftime('%b %dth, %Y') }}&sect;
+				<a href="{{post.get_absolute_url()}}#comments" title="Comment on {{post.title}}"><span class="commentcount">{{post.comment_count}} comment</span></a>
+				&sect; <a href="{{post.get_absolute_url()}}" rel="bookmark" title="Permanent Link to Hello world!">permalink</a></p>
+      
+				<div class="entry">
+                    {% if post.excerpt %} <p>{{ post.excerpt }}</p>
 					{% elif post.content.find("<!-- pagebreak -->") != -1 %} {{ post.content|excerpt}} <!-- excerpt is self-defined filter -->
 					{% else %}{{ post.content|striptags|truncate(300) }}
 					{% endif %}
-					<a href="{{ post.get_absolute_url() }}">...Read more</a>
-				</p>
-			</div>
+					<a href="{{ post.get_absolute_url() }}" style="font-family: Vollkorn">...Read more</a>
+				</div>
+			</div><!-- close post_class -->
+		{% else %}
+			<h2> Not found.</h2>
+		{% endfor %}
 		
-			<br /><br />
+		<!-- navigation 
+		<div class="navigation">
+			<p class="alignleft">previous</p>
+			<p class="alignright">next</p>
+		</div> -->
+		
+		<!-- posts navigation -->
+		<div class="navigation">
+			{% if page > 1 %}
+				<p class="alignleft"><a href="?page={{ page - 1 }}">&laquo; Previous</a>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;|</p>
+			{% else %}
+				<p class="alignleft">&laquo; Previous&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;|</p>
+			{% endif %}
+			{% if page < page_count %}
+				<p class="alignright"><a href="?page={{ page + 1 }}">Next &raquo;</a></p>
+			{% else %}
+				<p class="alignright">Next &raquo;</p>
+			{% endif %}
 		</div>
-	{% else %}
-		<h2> Not found.</h2>
-	{% endfor %}
-	
-	<!-- next and previous posts navigation -->
-	<div class="navigation group">
-		{% if page > 1 %}
-			<div class="alignleft"><a href="?page={{ page - 1 }}">&laquo; Previous</a></div>
-		{% endif %}
-		{% if page < page_count %}
-			<div class="alignright"><a href="?page={{ page + 1 }}">Next &raquo;</a></div>
-		{% endif %}
 	</div>
-	
 
 {% endblock %}
+
+{% block sidebar %}
+{% include "sidebar.html" %}
+{% endblock %}
+
+
+
 
 

@@ -67,13 +67,13 @@
 							<div id="minor-publishing-actions">
 							
 							<span id="sticky-span" style="display: inline;">
-							<input type="checkbox" tabindex="4" value="sticky" name="sticky" id="sticky" {% if post and post.sticky %} checked{% endif %}> 
+							<input type="checkbox" tabindex="4" value="sticky" name="sticky" id="sticky" {% if post and post.sticky %}checked="checked"{% endif %}> 
 							<label class="selectit" for="sticky">置顶这篇文章到首页</label>
 							<br>
 							</span> 
 							
 							<span style="display:inline;">
-								<input type="checkbox" checked="checked" value="open" id="comment_status" name="comment_status"> 
+								<input type="checkbox" {% if post and post.comment_status %}checked="checked"{% endif %} value="open" id="comment_status" name="comment_status"> 
 							<label class="selectit" for="sticky">这篇文章接受评论</label><br/>
 							</span>
 							<div id="save-action" class="alignleft">
@@ -127,5 +127,6 @@
 <!-- use tinymce -->
 <script type="text/javascript" src="/static/tiny_mce/tiny_mce.js"></script>
 <script type="text/javascript" src="/static/tiny_mce/tiny_mce_init.js"></script>
+<!-- end tinymce -->
 
 {%endblock%}

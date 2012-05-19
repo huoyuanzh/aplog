@@ -374,12 +374,14 @@ class posts_by_category(object):
             page = 1
         try:
             arg = int(arg)
-            cate = web.ctx.orm.query(Term).filter(Term.id==arg).first()
+            cate = web.ctx.orm.query(Term).\
+                   filter(Term.id==arg).first()
         except:
-            cate = web.ctx.orm.query(Term).filter(Term.type=='category').\
-                                           filter(Term.slug==arg).first()
+            cate = web.ctx.orm.query(Term).\
+                   filter(Term.type=='category').\
+                   filter(Term.slug==arg).first()
         if cate:
-            posts = cate.posts
+            posts = cate.posts.order_by('posts.created DESC')
             return  admin_render.category_posts(posts=posts, page=page)
         else:
             raise web.notfound()
@@ -393,9 +395,11 @@ class categories(object):
             page = int(i.page)
         except:
             page = 1
-        categories = web.ctx.orm.query(Term).filter(Term.type=='category').all()
+        categories = web.ctx.orm.query(Term).\
+                     filter(Term.type=='category').all()
         msg = web.ctx.get('msg', '')
-        return admin_render.categories(categories=categories, page=page, msg=msg)
+        return admin_render.categories(categories=categories,
+                                       page=page, msg=msg)
 
 
 # add a category
